@@ -84,8 +84,10 @@ class RegisterActivity : AppCompatActivity() {
                         "role" to role
                     )
 
-                    FirebaseDatabase.getInstance().reference
-                        .child("users")
+                    val dbRef = FirebaseDatabase.getInstance().reference
+                    val roleNode = if (role == "Parent") "parents" else "admins"
+
+                    dbRef.child(roleNode)
                         .child(userId)
                         .setValue(userMap)
                         .addOnSuccessListener {
