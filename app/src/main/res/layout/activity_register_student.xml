@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#2196F3"
+    tools:context=".RegisterStudentActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <!-- Heading -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Register Student"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Child First Name -->
+        <EditText
+            android:id="@+id/etChildFirstName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Child's First Name"
+            android:inputType="textPersonName" />
+
+        <!-- Child Last Name -->
+        <EditText
+            android:id="@+id/etChildLastName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Child's Last Name"
+            android:inputType="textPersonName"
+            android:layout_marginTop="12dp" />
+
+        <!-- Full Address -->
+        <EditText
+            android:id="@+id/etAddress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Full Address"
+            android:inputType="textPostalAddress"
+            android:layout_marginTop="12dp" />
+
+        <!-- Zip Code -->
+        <EditText
+            android:id="@+id/etZipCode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Zip Code"
+            android:inputType="number"
+            android:layout_marginTop="12dp" />
+
+        <!-- Parent Email -->
+        <EditText
+            android:id="@+id/etParentEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Parent Email"
+            android:inputType="textEmailAddress"
+            android:layout_marginTop="12dp" />
+
+        <!-- Child DOB -->
+        <EditText
+            android:id="@+id/etDob"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Child Date of Birth"
+            android:focusable="false"
+            android:clickable="true"
+            android:layout_marginTop="12dp" />
+
+        <!-- Activities Checkboxes -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Select Activities:"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp" />
+
+        <CheckBox
+            android:id="@+id/cbKarate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Karate" />
+
+        <CheckBox
+            android:id="@+id/cbSoccer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Soccer" />
+
+        <CheckBox
+            android:id="@+id/cbIslamicStudies"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Islamic Studies" />
+
+        <CheckBox
+            android:id="@+id/cbSwimming"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Swimming" />
+
+        <!-- Upload Documents Button -->
+        <Button
+            android:id="@+id/btnUploadDocs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Upload Documents"
+            android:layout_marginTop="20dp" />
+
+        <!-- Register Button -->
+        <Button
+            android:id="@+id/btnRegisterStudent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Register Student"
+            android:layout_marginTop="16dp" />
+
+    </LinearLayout>
+</ScrollView>
