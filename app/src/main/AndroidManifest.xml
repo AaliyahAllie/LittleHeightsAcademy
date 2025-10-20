@@ -13,6 +13,21 @@
         android:theme="@style/Theme.LittleHeightsAcademy"
         tools:targetApi="31">
         <activity
+            android:name=".AdminViewStudentAccountActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AdminStudentMarksActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AdminMessageActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AdminUpdateSeatsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ViewAllApplicationsActivity"
+            android:exported="false" />
+        <activity
             android:name=".AdminEnrollmentVerificationActivity"
             android:exported="false" />
         <activity
