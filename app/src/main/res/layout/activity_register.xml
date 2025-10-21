@@ -1,40 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:background="#2196F3"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="20dp">
+    android:background="#2196F3"
+    android:padding="20dp"
+    tools:context=".ParentLoginActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Header -->
+        <!-- Header Section -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layout_marginBottom="20dp">
+            android:orientation="horizontal"
+            android:paddingTop="24dp">
 
             <ImageView
-                android:layout_width="60dp"
-                android:layout_height="60dp"
+                android:id="@+id/logoImage"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_marginEnd="10dp"
                 android:src="@drawable/logo"
-                android:background="@drawable/rounded_image_bg"
-                android:scaleType="centerCrop"
-                android:layout_marginEnd="10dp" />
+                android:padding="8dp" />
 
             <TextView
+                android:id="@+id/schoolName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="cursive"
                 android:text="Little Heights Academy"
                 android:textColor="@android:color/white"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:textSize="22sp" />
         </LinearLayout>
 
+
+
+        <!-- Registration Section -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -42,9 +49,10 @@
             android:textSize="22sp"
             android:textStyle="bold"
             android:textColor="@android:color/white"
-            android:layout_marginBottom="10dp" />
+            android:layout_marginTop="40dp"
+            android:layout_marginBottom="10dp"
+            android:layout_gravity="center_horizontal" />
 
-        <!-- White Form Container -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -52,7 +60,6 @@
             android:padding="20dp"
             android:orientation="vertical"
             android:elevation="4dp"
-            android:layout_marginTop="5dp"
             android:layout_marginBottom="30dp">
 
             <TextView
@@ -156,7 +163,6 @@
                 android:layout_marginTop="15dp"
                 android:backgroundTint="#2196F3"
                 android:textColor="@android:color/white" />
-
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

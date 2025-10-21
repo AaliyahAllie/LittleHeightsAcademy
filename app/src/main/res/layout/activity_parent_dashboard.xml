@@ -10,76 +10,160 @@
     android:padding="16dp"
     tools:context=".ParentDashboardActivity">
 
-    <!-- Logo -->
-    <ImageView
-        android:id="@+id/imgLogo"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:src="@drawable/logo"
-        android:contentDescription="App Logo"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="32dp" />
-
-    <!-- Heading -->
-    <TextView
-        android:id="@+id/tvHeading"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Parent Dashboard"
-        android:textStyle="bold"
-        android:textSize="24sp"
-        app:layout_constraintTop_toBottomOf="@id/imgLogo"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp" />
-
-    <!-- Register Student Block -->
-    <LinearLayout
-        android:id="@+id/btnRegisterStudent"
+    <!-- Scrollable Content -->
+    <ScrollView
+        android:id="@+id/scrollContent"
         android:layout_width="0dp"
-        android:layout_height="150dp"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:background="@drawable/block_background"
-        android:clickable="true"
-        android:focusable="true"
-        app:layout_constraintTop_toBottomOf="@id/tvHeading"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/bottomNavigation"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="32dp"
-        android:padding="16dp">
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <ImageView
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:src="@drawable/ic_student"
-            android:contentDescription="Register Student Icon"
-            android:layout_gravity="center" />
-
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Register Student"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:layout_marginTop="8dp"
-            android:layout_gravity="center" />
-    </LinearLayout>
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:paddingBottom="32dp">
+
+            <!-- Top Section -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingTop="24dp">
+
+                <ImageView
+                    android:id="@+id/logoImage"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:layout_marginEnd="10dp"
+                    android:src="@drawable/logo"
+                    android:padding="8dp" />
+
+                <TextView
+                    android:id="@+id/schoolName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="cursive"
+                    android:text="Little Heights Academy"
+                    android:textColor="@android:color/white"
+                    android:textSize="22sp" />
+            </LinearLayout>
+
+            <!-- Register Student Block -->
+            <LinearLayout
+                android:id="@+id/btnRegisterStudent"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@drawable/block_background"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="16dp"
+                android:layout_marginTop="32dp">
+
+                <ImageView
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:src="@drawable/ic_student"
+                    android:contentDescription="Register Student Icon"
+                    android:layout_gravity="center" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Register Student"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="8dp"
+                    android:layout_gravity="center" />
+            </LinearLayout>
+
+            <!-- Seating Arrangement Card -->
+            <LinearLayout
+                android:id="@+id/layoutSeating"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:gravity="center"
+                android:clipToOutline="true"
+                android:elevation="4dp"
+                android:layout_marginTop="32dp"
+                android:background="@drawable/rounded_dark_card">
+
+                <TextView
+                    android:id="@+id/txtSeating"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Seating Arrangement"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp"
+                    android:fontFamily="sans-serif-medium"
+                    android:layout_gravity="center_horizontal" />
+
+                <TextView
+                    android:id="@+id/txtFromAllClasses"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="From all classes"
+                    android:textColor="#9AA0C1"
+                    android:textSize="12sp"
+                    android:layout_marginTop="2dp"
+                    android:layout_gravity="center_horizontal" />
+
+                <!-- Progress Circle -->
+                <ProgressBar
+                    android:id="@+id/progressSeating"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:layout_marginTop="16dp"
+                    android:indeterminate="false"
+                    android:progress="95"
+                    android:max="100"
+                    android:rotation="270"
+                    android:progressDrawable="@drawable/circular_progress_blue" />
+
+                <TextView
+                    android:id="@+id/txtPercentage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="95%"
+                    android:textColor="@android:color/white"
+                    android:textSize="20sp"
+                    android:layout_marginTop="12dp"
+                    android:layout_gravity="center_horizontal" />
+
+                <TextView
+                    android:id="@+id/txtBasedOn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Based on seating available"
+                    android:textColor="#9AA0C1"
+                    android:textSize="12sp"
+                    android:layout_gravity="center_horizontal" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
 
     <!-- Bottom Navigation -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigation"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:background="@color/white"
         app:menu="@menu/parent_bottom_nav_menu"
         app:itemIconTint="@color/black"
         app:itemTextColor="@color/black"
         app:labelVisibilityMode="labeled"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:background="@color/white" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

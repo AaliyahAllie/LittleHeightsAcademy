@@ -1,16 +1,18 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+
     <item
         android:id="@+id/nav_home"
         android:title="Home"
         android:icon="@drawable/ic_home" />
 
     <item
-        android:id="@+id/nav_students"
-        android:title="Students"
-        android:icon="@drawable/ic_student" />
+        android:id="@+id/nav_menu"
+        android:title="Menu"
+        android:icon="@drawable/ic_menu" />  <!-- optional icon -->
 
     <item
-        android:id="@+id/nav_settings"
-        android:title="Settings"
-        android:icon="@drawable/ic_settings" />
+        android:id="@+id/nav_profile"
+        android:title="Profile"
+        android:icon="@drawable/ic_student" /> <!-- optional icon -->
+
 </menu>
