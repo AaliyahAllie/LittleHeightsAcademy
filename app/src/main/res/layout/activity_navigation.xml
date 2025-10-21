@@ -2,57 +2,105 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#37A3A5"
     android:padding="16dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:spacing="16dp">
+        android:orientation="vertical">
 
-        <Button
-            android:id="@+id/btnChat"
+        <!-- Top Section -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Chat" />
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingTop="24dp"
+            android:paddingBottom="24dp">
 
-        <Button
-            android:id="@+id/btnDashboard"
+            <ImageView
+                android:id="@+id/logoImage"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_marginEnd="10dp"
+                android:src="@drawable/logo"
+                android:padding="8dp" />
+
+            <TextView
+                android:id="@+id/schoolName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="cursive"
+                android:text="Little Heights Academy"
+                android:textColor="@android:color/white"
+                android:textSize="22sp" />
+        </LinearLayout>
+
+        <!-- Buttons Section -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Dashboard" />
+            android:orientation="vertical"
+            android:gravity="center">
 
-        <Button
-            android:id="@+id/btnPaymentHistory"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Payment History" />
+            <Button
+                android:id="@+id/btnChat"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:backgroundTint="#2196F3"
+                android:text="Chat" />
 
-        <Button
-            android:id="@+id/btnRegisterStudent"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Register Student" />
+            <Button
+                android:id="@+id/btnDashboard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:backgroundTint="#2196F3"
+                android:text="Dashboard" />
 
-        <Button
-            android:id="@+id/btnTrackStatus"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Track Status" />
+            <Button
+                android:id="@+id/btnPaymentHistory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:backgroundTint="#2196F3"
+                android:text="Payment History" />
 
-        <Button
-            android:id="@+id/btnProfile"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Profile" />
+            <Button
+                android:id="@+id/btnRegisterStudent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:backgroundTint="#2196F3"
+                android:text="Register Student" />
 
-        <Button
-            android:id="@+id/btnLogout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Logout"
-            android:textColor="@android:color/holo_red_dark" />
+            <Button
+                android:id="@+id/btnTrackStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:backgroundTint="#2196F3"
+                android:text="Track Status" />
 
+            <Button
+                android:id="@+id/btnProfile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:backgroundTint="#2196F3"
+                android:text="Profile" />
+
+            <Button
+                android:id="@+id/btnLogout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:backgroundTint="#2196F3"
+                android:text="Logout"
+                android:textColor="@android:color/holo_red_dark" />
+
+        </LinearLayout>
     </LinearLayout>
 </ScrollView>

@@ -31,23 +31,35 @@ class ParentDashboardActivity : AppCompatActivity() {
         bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_home -> {
-                    Toast.makeText(this, "Already on Home", Toast.LENGTH_SHORT).show()
+                    // Open Home screen (if not already there)
+                    if (this !is ParentDashboardActivity) {
+                        startActivity(Intent(this, ParentDashboardActivity::class.java))
+                        overridePendingTransition(0, 0)
+                        finish()
+                    }
                     true
                 }
-                R.id.nav_students -> {
-                    Toast.makeText(this, "Students feature coming soon!", Toast.LENGTH_SHORT).show()
+                R.id.nav_profile -> {
+                    // Open ParentProfileActivity (or student profile)
+                    if (this !is ParentProfileActivity) {
+                        startActivity(Intent(this, ParentProfileActivity::class.java))
+                        overridePendingTransition(0, 0)
+                        finish()
+                    }
                     true
                 }
-                R.id.nav_settings -> {
-                    // Simple example: Logout for now
-                    auth.signOut()
-                    Toast.makeText(this, "Logged out", Toast.LENGTH_SHORT).show()
-                    startActivity(Intent(this, ParentLoginActivity::class.java))
-                    finish()
+                R.id.nav_menu -> {
+                    // Open MenuActivity (or implement logout separately)
+                    if (this !is NavigationActivity) {
+                        startActivity(Intent(this, NavigationActivity::class.java))
+                        overridePendingTransition(0, 0)
+                        finish()
+                    }
                     true
                 }
                 else -> false
             }
         }
+
     }
 }
