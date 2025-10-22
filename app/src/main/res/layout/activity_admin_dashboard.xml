@@ -1,132 +1,153 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="#37A3A5"
     android:padding="16dp"
     tools:context=".AdminDashboardActivity">
 
-    <!-- Top Section -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:paddingTop="24dp">
+    <!-- Scrollable Content -->
+    <ScrollView
+        android:id="@+id/scrollContent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/bottomNav"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <ImageView
-            android:id="@+id/logoImage"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:layout_marginEnd="10dp"
-            android:src="@drawable/logo"
-            android:padding="8dp" />
-
-        <TextView
-            android:id="@+id/schoolName"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="cursive"
-            android:text="Little Heights Academy"
-            android:textColor="@android:color/white"
-            android:textSize="22sp" />
-    </LinearLayout>
+            android:orientation="vertical">
 
-    <!-- Message Parent Button -->
-    <Button
-        android:id="@+id/btnMessageParent"
-        android:layout_width="match_parent"
-        android:layout_height="55dp"
-        android:layout_marginTop="24dp"
-        android:text="Message Parent"
-        android:textColor="@android:color/white"
-        android:backgroundTint="#007BFF"
-        android:drawablePadding="8dp"
-        android:fontFamily="sans-serif-medium" />
+            <!-- Top Section -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingTop="24dp">
 
-    <!-- Seating Arrangement Card -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="250dp"
-        android:layout_marginTop="32dp"
-        android:orientation="vertical"
-        android:padding="16dp"
-        android:gravity="center"
-        android:layout_gravity="center"
-        android:clipToOutline="true"
-        android:elevation="4dp"
-        android:layout_marginHorizontal="8dp"
-        android:backgroundTint="#0E1744"
-        android:backgroundTintMode="src_in"
-        android:background="@drawable/rounded_dark_card">
+                <ImageView
+                    android:id="@+id/logoImage"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:layout_marginEnd="10dp"
+                    android:src="@drawable/logo"
+                    android:padding="8dp" />
 
-        <TextView
-            android:id="@+id/txtSeating"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Seating Arrangement"
-            android:textColor="@android:color/white"
-            android:textSize="16sp"
-            android:fontFamily="sans-serif-medium"
-            android:layout_gravity="center_horizontal" />
+                <TextView
+                    android:id="@+id/schoolName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="cursive"
+                    android:text="Little Heights Academy"
+                    android:textColor="@android:color/white"
+                    android:textSize="22sp" />
+            </LinearLayout>
 
-        <TextView
-            android:id="@+id/txtFromAllClasses"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="From all classes"
-            android:textColor="#9AA0C1"
-            android:textSize="12sp"
-            android:layout_marginTop="2dp"
-            android:layout_gravity="center_horizontal" />
+            <!-- Message Parent Button -->
+            <Button
+                android:id="@+id/btnMessageParent"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_marginTop="24dp"
+                android:text="Message Parent"
+                android:textColor="@android:color/white"
+                android:backgroundTint="#007BFF"
+                android:drawablePadding="8dp"
+                android:fontFamily="sans-serif-medium" />
 
-        <!-- Progress Circle -->
-        <ProgressBar
-            android:id="@+id/progressSeating"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:layout_marginTop="16dp"
-            android:indeterminate="false"
-            android:progress="95"
-            android:max="100"
-            android:rotation="270"
-            android:progressDrawable="@drawable/circular_progress_blue" />
+            <!-- Seating Arrangement Card -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:layout_marginTop="32dp"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:clipToOutline="true"
+                android:elevation="4dp"
+                android:layout_marginHorizontal="8dp"
+                android:backgroundTint="#0E1744"
+                android:backgroundTintMode="src_in"
+                android:background="@drawable/rounded_dark_card">
 
-        <TextView
-            android:id="@+id/txtPercentage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="95%"
-            android:textColor="@android:color/white"
-            android:textSize="20sp"
-            android:layout_marginTop="12dp"
-            android:layout_gravity="center_horizontal" />
+                <TextView
+                    android:id="@+id/txtSeating"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Seating Arrangement"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp"
+                    android:fontFamily="sans-serif-medium"
+                    android:layout_gravity="center_horizontal" />
 
-        <TextView
-            android:id="@+id/txtBasedOn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Based on seating available"
-            android:textColor="#9AA0C1"
-            android:textSize="12sp"
-            android:layout_gravity="center_horizontal" />
-    </LinearLayout>
+                <TextView
+                    android:id="@+id/txtFromAllClasses"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="From all classes"
+                    android:textColor="#9AA0C1"
+                    android:textSize="12sp"
+                    android:layout_marginTop="2dp"
+                    android:layout_gravity="center_horizontal" />
+
+                <!-- Progress Circle -->
+                <ProgressBar
+                    android:id="@+id/progressSeating"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:layout_marginTop="16dp"
+                    android:indeterminate="false"
+                    android:progress="95"
+                    android:max="100"
+                    android:rotation="270"
+                    android:progressDrawable="@drawable/circular_progress_blue" />
+
+                <TextView
+                    android:id="@+id/txtPercentage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="95%"
+                    android:textColor="@android:color/white"
+                    android:textSize="20sp"
+                    android:layout_marginTop="12dp"
+                    android:layout_gravity="center_horizontal" />
+
+                <TextView
+                    android:id="@+id/txtBasedOn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Based on seating available"
+                    android:textColor="#9AA0C1"
+                    android:textSize="12sp"
+                    android:layout_gravity="center_horizontal" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
 
     <!-- Bottom Navigation -->
     <LinearLayout
-        android:layout_width="match_parent"
+        android:id="@+id/bottomNav"
+        android:layout_width="0dp"
         android:layout_height="80dp"
-        android:layout_marginTop="24dp"
         android:orientation="horizontal"
         android:gravity="center"
         android:weightSum="3"
         android:padding="4dp"
-        android:background="@drawable/rounded_nav_bg">
-
+        android:background="@drawable/rounded_nav_bg"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <!-- User Button -->
         <LinearLayout
@@ -157,7 +178,6 @@
         </LinearLayout>
 
         <!-- Home Button -->
-
         <LinearLayout
             android:id="@+id/navHome"
             android:layout_width="0dp"
@@ -213,4 +233,5 @@
                 android:fontFamily="sans-serif-medium" />
         </LinearLayout>
     </LinearLayout>
-</LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

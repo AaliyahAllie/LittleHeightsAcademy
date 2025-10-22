@@ -196,7 +196,7 @@
                         <Button
                             android:id="@+id/uploadButton1"
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content"
+                            android:layout_height="36dp"
                             android:layout_weight="1"
                             android:text="Upload"
                             android:textSize="12sp"
@@ -242,7 +242,7 @@
                         <Button
                             android:id="@+id/uploadButton2"
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content"
+                            android:layout_height="36dp"
                             android:layout_weight="1"
                             android:text="Upload"
                             android:textSize="12sp"
