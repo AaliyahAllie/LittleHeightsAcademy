@@ -11,4 +11,5 @@ data class Student(
     var activities: List<String> = listOf(),
     var status: String = "PENDING",
     var documentUrl: String? = null // optional
+
 )
