@@ -54,7 +54,7 @@
                     android:textSize="22sp" />
             </LinearLayout>
 
-            <!-- Register Student Block -->
+            <!-- Register Student Card -->
             <LinearLayout
                 android:id="@+id/btnRegisterStudent"
                 android:layout_width="match_parent"
@@ -86,15 +86,15 @@
 
             <!-- Seating Arrangement Card -->
             <LinearLayout
-                android:id="@+id/layoutSeating"
                 android:layout_width="match_parent"
-                android:layout_height="250dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
                 android:orientation="vertical"
                 android:padding="16dp"
                 android:gravity="center"
                 android:clipToOutline="true"
                 android:elevation="4dp"
-                android:layout_marginTop="32dp"
+                android:layout_marginHorizontal="8dp"
                 android:background="@drawable/rounded_dark_card">
 
                 <TextView
@@ -117,27 +117,38 @@
                     android:layout_marginTop="2dp"
                     android:layout_gravity="center_horizontal" />
 
-                <!-- Progress Circle -->
-                <ProgressBar
+                <!-- Circular Progress Indicator -->
+                <com.google.android.material.progressindicator.CircularProgressIndicator
                     android:id="@+id/progressSeating"
-                    style="?android:attr/progressBarStyleHorizontal"
-                    android:layout_width="150dp"
-                    android:layout_height="150dp"
+                    android:layout_width="220dp"
+                    android:layout_height="200dp"
                     android:layout_marginTop="16dp"
                     android:indeterminate="false"
-                    android:progress="95"
                     android:max="100"
-                    android:rotation="270"
-                    android:progressDrawable="@drawable/circular_progress_blue" />
+                    app:indicatorSize="12dp"
+                    app:trackColor="#2C3E50"
+                    app:indicatorColor="#3C5BFB" />
 
+                <!-- Percentage Filled -->
                 <TextView
                     android:id="@+id/txtPercentage"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="95%"
+                    android:text="0%"
                     android:textColor="@android:color/white"
                     android:textSize="20sp"
                     android:layout_marginTop="12dp"
+                    android:layout_gravity="center_horizontal" />
+
+                <!-- Seats Left -->
+                <TextView
+                    android:id="@+id/txtSeatsLeft"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Seats left: 0"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp"
+                    android:layout_marginTop="8dp"
                     android:layout_gravity="center_horizontal" />
 
                 <TextView
@@ -148,6 +159,7 @@
                     android:textColor="#9AA0C1"
                     android:textSize="12sp"
                     android:layout_gravity="center_horizontal" />
+
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

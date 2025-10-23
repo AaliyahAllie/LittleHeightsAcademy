@@ -23,6 +23,7 @@ class AdminLoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_admin_login)
 
+        // Handle window insets (status/navigation bar padding)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -37,13 +38,14 @@ class AdminLoginActivity : AppCompatActivity() {
         btnLogin = findViewById(R.id.btnLogin)
         tvRegisterLink = findViewById(R.id.tvRegisterLink)
 
+        // Handle login
         btnLogin.setOnClickListener {
             loginAdmin()
         }
 
+        // Handle register link
         tvRegisterLink.setOnClickListener {
-            val intent = Intent(this, RegisterActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, RegisterActivity::class.java))
         }
     }
 
@@ -52,7 +54,7 @@ class AdminLoginActivity : AppCompatActivity() {
         val pass = password.text.toString().trim()
 
         if (mail.isEmpty() || pass.isEmpty()) {
-            Toast.makeText(this, "Please enter both email and password", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Please enter both email and password.", Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -61,7 +63,7 @@ class AdminLoginActivity : AppCompatActivity() {
                 if (task.isSuccessful) {
                     val userId = auth.currentUser?.uid ?: return@addOnCompleteListener
 
-                    // Check if user role is Admin in Firebase
+                    // Check if user is an admin in Firebase
                     val adminRef = database.child("admins").child(userId).child("role")
 
                     adminRef.addListenerForSingleValueEvent(object : ValueEventListener {
@@ -74,11 +76,12 @@ class AdminLoginActivity : AppCompatActivity() {
                                     Toast.LENGTH_SHORT
                                 ).show()
 
-
+                                // ✅ Go to AdminDashboardActivity
                                 val intent = Intent(
                                     this@AdminLoginActivity,
                                     AdminDashboardActivity::class.java
                                 )
+                                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                                 startActivity(intent)
                                 finish()
                             } else {
@@ -100,8 +103,7 @@ class AdminLoginActivity : AppCompatActivity() {
                         }
                     })
                 } else {
-                    val errorMessage =
-                        task.exception?.localizedMessage ?: "Login failed. Please try again."
+                    val errorMessage = task.exception?.localizedMessage ?: "Login failed. Please try again."
                     Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show()
                 }
             }

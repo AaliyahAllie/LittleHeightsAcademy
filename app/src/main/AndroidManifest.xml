@@ -41,9 +41,6 @@
             android:name=".AdminStudentMarksActivity"
             android:exported="false" />
         <activity
-            android:name=".AdminMessageActivity"
-            android:exported="false" />
-        <activity
             android:name=".AdminUpdateSeatsActivity"
             android:exported="false" />
         <activity
@@ -52,6 +49,10 @@
         <activity
             android:name=".AdminEnrollmentVerificationActivity"
             android:exported="false" />
+        <activity android:name=".NavigationAdminActivity"
+            android:exported="true"/>
+        <activity android:name=".AdminDashboardActivity"
+            android:exported="true"/>
         <activity
             android:name=".AdminLoginActivity"
             android:exported="true" />

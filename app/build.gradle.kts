@@ -56,7 +56,7 @@ dependencies {
     implementation("com.google.firebase:firebase-database-ktx")
     implementation("com.google.firebase:firebase-storage-ktx")
     implementation("com.google.firebase:firebase-analytics-ktx")
-
+    implementation("com.google.android.material:material:1.9.0")
     // Other
     implementation("de.hdodenhof:circleimageview:3.1.0")
 

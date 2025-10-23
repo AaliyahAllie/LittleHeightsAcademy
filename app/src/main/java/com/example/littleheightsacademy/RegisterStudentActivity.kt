@@ -7,10 +7,12 @@ import android.net.Uri
 import android.os.Bundle
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import java.util.*
+
 
 class RegisterStudentActivity : AppCompatActivity() {
 
@@ -22,33 +24,33 @@ class RegisterStudentActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register_student)
 
-        // Initialize Firebase Storage reference
         storageRef = FirebaseStorage.getInstance().reference
 
         val etDob = findViewById<EditText>(R.id.etDob)
         val btnRegister = findViewById<Button>(R.id.btnRegisterStudent)
         val btnUpload = findViewById<Button>(R.id.btnUploadDocs)
 
-        // Date Picker for DOB
+        // Date Picker
         etDob.setOnClickListener {
             val c = Calendar.getInstance()
-            val year = c.get(Calendar.YEAR)
-            val month = c.get(Calendar.MONTH)
-            val day = c.get(Calendar.DAY_OF_MONTH)
-            val dpd = DatePickerDialog(this, { _, y, m, d ->
-                etDob.setText("$d/${m + 1}/$y")
-            }, year, month, day)
+            val dpd = DatePickerDialog(
+                this,
+                { _, y, m, d -> etDob.setText("$d/${m + 1}/$y") },
+                c.get(Calendar.YEAR),
+                c.get(Calendar.MONTH),
+                c.get(Calendar.DAY_OF_MONTH)
+            )
             dpd.show()
         }
 
-        // Upload Button
+        // Upload Document (optional)
         btnUpload.setOnClickListener {
             val intent = Intent(Intent.ACTION_GET_CONTENT)
-            intent.type = "*/*" // allow any file type
+            intent.type = "*/*"
             startActivityForResult(Intent.createChooser(intent, "Select Document"), PICK_FILE_REQUEST)
         }
 
-        // Register Button
+        // Register Student
         btnRegister.setOnClickListener {
             val firstName = findViewById<EditText>(R.id.etChildFirstName).text.toString().trim()
             val lastName = findViewById<EditText>(R.id.etChildLastName).text.toString().trim()
@@ -68,25 +70,20 @@ class RegisterStudentActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            if (documentUri == null) {
-                Toast.makeText(this, "Please upload a document.", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            uploadDocumentAndSaveStudent(firstName, lastName, address, zip, email, dob, activities)
+            // Call save method (optional document)
+            saveStudent(firstName, lastName, address, zip, email, dob, activities)
         }
     }
 
-    // Handle file selection result
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == PICK_FILE_REQUEST && resultCode == Activity.RESULT_OK && data != null && data.data != null) {
+        if (requestCode == PICK_FILE_REQUEST && resultCode == Activity.RESULT_OK && data?.data != null) {
             documentUri = data.data
             Toast.makeText(this, "Document selected: ${documentUri?.lastPathSegment}", Toast.LENGTH_SHORT).show()
         }
     }
 
-    private fun uploadDocumentAndSaveStudent(
+    private fun saveStudent(
         firstName: String,
         lastName: String,
         address: String,
@@ -96,46 +93,65 @@ class RegisterStudentActivity : AppCompatActivity() {
         activities: List<String>
     ) {
         val studentsRef = FirebaseDatabase.getInstance().getReference("students")
-        val studentId: String = studentsRef.push().key ?: return
+        val studentId = studentsRef.push().key ?: return
 
-        // Upload document to Firebase Storage
-        val fileRef: StorageReference = storageRef.child("student_docs/$studentId-${documentUri?.lastPathSegment}")
-
-        documentUri?.let { uri: Uri ->
-            fileRef.putFile(uri)
-                .addOnSuccessListener { taskSnapshot ->
-                    fileRef.downloadUrl.addOnSuccessListener { downloadUrl: Uri ->
-                        // Save student data including document URL
-                        val studentData: Map<String, Any> = mapOf(
-                            "id" to studentId,
-                            "firstName" to firstName,
-                            "lastName" to lastName,
-                            "address" to address,
-                            "zip" to zip,
-                            "email" to email,
-                            "dob" to dob,
-                            "activities" to activities,
-                            "documentUrl" to downloadUrl.toString(),
-                            "status" to "PENDING"
-                        )
-
-                        studentsRef.child(studentId)
-                            .setValue(studentData)
-                            .addOnSuccessListener {
-                                Toast.makeText(this, "Student registered successfully!", Toast.LENGTH_SHORT).show()
-                                val intent = Intent(this, RegistrationConfirmationActivity::class.java)
-                                intent.putExtra("studentName", "$firstName $lastName")
-                                startActivity(intent)
-                                finish()
-                            }
-                            .addOnFailureListener { e: Exception ->
-                                Toast.makeText(this, "Failed to save student: ${e.message}", Toast.LENGTH_SHORT).show()
-                            }
+        if (documentUri != null) {
+            // Upload document if exists
+            val fileRef = storageRef.child("student_docs/$studentId-${documentUri?.lastPathSegment}")
+            fileRef.putFile(documentUri!!)
+                .addOnSuccessListener {
+                    fileRef.downloadUrl.addOnSuccessListener { downloadUrl ->
+                        saveStudentData(studentsRef, studentId, firstName, lastName, address, zip, email, dob, activities, downloadUrl.toString())
                     }
                 }
-                .addOnFailureListener { e: Exception ->
+                .addOnFailureListener { e ->
                     Toast.makeText(this, "Failed to upload document: ${e.message}", Toast.LENGTH_SHORT).show()
+                    // Still save student data without document
+                    saveStudentData(studentsRef, studentId, firstName, lastName, address, zip, email, dob, activities, null)
                 }
+        } else {
+            // Save without document
+            saveStudentData(studentsRef, studentId, firstName, lastName, address, zip, email, dob, activities, null)
         }
+    }
+
+    private fun saveStudentData(
+        ref: DatabaseReference,
+        studentId: String,
+        firstName: String,
+        lastName: String,
+        address: String,
+        zip: String,
+        email: String,
+        dob: String,
+        activities: List<String>,
+        documentUrl: String?
+    ) {
+        val studentData = mutableMapOf<String, Any>(
+            "id" to studentId,
+            "firstName" to firstName,
+            "lastName" to lastName,
+            "address" to address,
+            "zip" to zip,
+            "email" to email,
+            "dob" to dob,
+            "activities" to activities,
+            "status" to "PENDING"
+        )
+
+        documentUrl?.let { studentData["documentUrl"] = it }
+
+        ref.child(studentId)
+            .setValue(studentData)
+            .addOnSuccessListener {
+                Toast.makeText(this, "Student registered successfully!", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this, RegistrationConfirmationActivity::class.java)
+                intent.putExtra("studentName", "$firstName $lastName")
+                startActivity(intent)
+                finish()
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Failed to save student: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
     }
 }

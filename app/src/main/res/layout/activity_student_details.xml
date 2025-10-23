@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="20dp"
+    android:background="#E3F2FD">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/tvStudentName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            android:paddingBottom="8dp" />
+
+        <TextView
+            android:id="@+id/tvStudentEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Email:" />
+
+        <TextView
+            android:id="@+id/tvStudentDob"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Date of Birth:" />
+
+        <TextView
+            android:id="@+id/tvStudentAddress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Address:" />
+
+        <TextView
+            android:id="@+id/tvStudentZip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ZIP Code:" />
+
+        <TextView
+            android:id="@+id/tvStudentActivities"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Activities:" />
+
+        <TextView
+            android:id="@+id/tvStudentStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Status:"
+            android:textStyle="bold"
+            android:textColor="#1976D2"
+            android:paddingBottom="12dp" />
+
+        <Button
+            android:id="@+id/btnViewDocument"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="View Uploaded Document"
+            android:backgroundTint="#2196F3"
+            android:textColor="@android:color/white" />
+
+    </LinearLayout>
+</ScrollView>
