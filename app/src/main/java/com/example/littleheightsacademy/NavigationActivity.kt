@@ -15,7 +15,7 @@ class NavigationActivity : AppCompatActivity() {
 
         auth = FirebaseAuth.getInstance()
 
-        val btnChat: Button = findViewById(R.id.btnChat)
+
         val btnDashboard: Button = findViewById(R.id.btnDashboard)
         val btnPaymentHistory: Button = findViewById(R.id.btnPaymentHistory)
         val btnRegisterStudent: Button = findViewById(R.id.btnRegisterStudent)
@@ -23,9 +23,7 @@ class NavigationActivity : AppCompatActivity() {
         val btnProfile: Button = findViewById(R.id.btnProfile)
         val btnLogout: Button = findViewById(R.id.btnLogout)
 
-        btnChat.setOnClickListener {
-            startActivity(Intent(this, ChatActivity::class.java))
-        }
+
 
         btnDashboard.setOnClickListener {
             startActivity(Intent(this, ParentDashboardActivity::class.java))
