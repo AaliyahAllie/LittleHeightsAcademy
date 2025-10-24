@@ -1,8 +1,6 @@
 package com.example.littleheightsacademy
 
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -15,8 +13,6 @@ class TrackStatusActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var database: DatabaseReference
     private lateinit var studentContainer: LinearLayout
-    private val handler = Handler(Looper.getMainLooper())
-    private val refreshInterval: Long = 5000 // 5 seconds
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,43 +23,37 @@ class TrackStatusActivity : AppCompatActivity() {
 
         studentContainer = findViewById(R.id.studentContainer)
 
-        // Start auto-refreshing every 5 seconds
-        startAutoRefresh()
-    }
-
-    private fun startAutoRefresh() {
-        handler.post(object : Runnable {
-            override fun run() {
-                loadStudentsForParent()
-                handler.postDelayed(this, refreshInterval)
-            }
-        })
+        // Load and listen for live changes
+        loadStudentsForParent()
     }
 
     private fun loadStudentsForParent() {
         val currentUser = auth.currentUser ?: return
-        val parentEmail = currentUser.email ?: return
+        val parentEmail = currentUser.email?.lowercase() ?: return
 
-        // Get only students whose email matches the logged-in parent's email
-        database.orderByChild("email").equalTo(parentEmail)
-            .addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val students = mutableListOf<Student>()
-                    for (child in snapshot.children) {
-                        val student = child.getValue(Student::class.java)
-                        student?.let { students.add(it) }
+        // Get ALL students first, then filter in code (to handle case-insensitive match)
+        database.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val students = mutableListOf<Student>()
+
+                for (child in snapshot.children) {
+                    val student = child.getValue(Student::class.java)
+                    if (student != null && student.email.lowercase() == parentEmail) {
+                        students.add(student)
                     }
-                    displayStudents(students)
                 }
 
-                override fun onCancelled(error: DatabaseError) {
-                    Toast.makeText(
-                        this@TrackStatusActivity,
-                        "Database error: ${error.message}",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            })
+                displayStudents(students)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(
+                    this@TrackStatusActivity,
+                    "Database error: ${error.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        })
     }
 
     private fun displayStudents(students: List<Student>) {
@@ -114,10 +104,5 @@ class TrackStatusActivity : AppCompatActivity() {
             card.addView(statusView)
             studentContainer.addView(card)
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        handler.removeCallbacksAndMessages(null) // stop auto-refresh when leaving
     }
 }
