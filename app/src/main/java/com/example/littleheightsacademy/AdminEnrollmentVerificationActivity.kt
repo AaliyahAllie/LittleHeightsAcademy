@@ -26,8 +26,6 @@ class AdminEnrollmentVerificationActivity : AppCompatActivity() {
         studentsRef = FirebaseDatabase.getInstance().getReference("students")
 
         // Initialize views
-        spinnerOptions = findViewById(R.id.spinnerOptions)
-        btnExecuteOption = findViewById(R.id.btnExecuteOption)
         btnViewAllApplications = findViewById(R.id.btnViewAllApplications)
         btnViewClosestArea = findViewById(R.id.btnViewClosestArea)
         btnViewStudentAccount = findViewById(R.id.btnViewStudentAccount)

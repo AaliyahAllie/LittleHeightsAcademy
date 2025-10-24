@@ -2,7 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#37A3A5"
+    android:background="#319CA8"
     android:padding="16dp">
 
     <LinearLayout
@@ -50,7 +50,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
-                android:backgroundTint="#2196F3"
+                android:backgroundTint="@color/white"
+                android:textColor="@color/black"
                 android:text="Dashboard" />
 
             <Button
@@ -58,7 +59,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
-                android:backgroundTint="#2196F3"
+                android:backgroundTint="@color/white"
+                android:textColor="@color/black"
                 android:text="Payment History" />
 
             <Button
@@ -66,7 +68,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
-                android:backgroundTint="#2196F3"
+                android:backgroundTint="@color/white"
+                android:textColor="@color/black"
                 android:text="Register Student" />
 
             <Button
@@ -74,7 +77,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
-                android:backgroundTint="#2196F3"
+                android:backgroundTint="@color/white"
+                android:textColor="@color/black"
                 android:text="Track Status" />
 
             <Button
@@ -82,7 +86,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
-                android:backgroundTint="#2196F3"
+                android:backgroundTint="@color/white"
+                android:textColor="@color/black"
                 android:text="Profile" />
 
             <Button
@@ -90,9 +95,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
-                android:backgroundTint="#2196F3"
-                android:text="Logout"
-                android:textColor="@android:color/holo_red_dark" />
+                android:backgroundTint="@color/white"
+                android:textColor="@color/black"
+                android:text="Logout" />
 
         </LinearLayout>
     </LinearLayout>

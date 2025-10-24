@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
-    android:background="#37A3A5"
+    android:background="#319CA8"
     tools:context=".PaymentHistoryActivity">
 
     <!-- App Bar -->
@@ -56,8 +56,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Make Payment"
-        android:backgroundTint="@color/blue"
-        android:textColor="@android:color/white"
+        android:backgroundTint="@color/white"
+        android:textColor="@color/black"
         android:layout_marginTop="8dp" />
 
 </LinearLayout>

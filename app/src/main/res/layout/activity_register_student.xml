@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#2196F3"
+    android:background="#319CA8"
     tools:context=".RegisterStudentActivity">
 
     <LinearLayout
@@ -58,7 +58,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Child's First Name"
-            android:inputType="textPersonName" />
+            android:inputType="textPersonName"
+            android:background="@android:drawable/edit_text"/>
 
         <!-- Child Last Name -->
         <EditText
@@ -67,7 +68,8 @@
             android:layout_height="wrap_content"
             android:hint="Child's Last Name"
             android:inputType="textPersonName"
-            android:layout_marginTop="12dp" />
+            android:layout_marginTop="12dp"
+            android:background="@android:drawable/edit_text"/>
 
         <!-- Full Address -->
         <EditText
@@ -76,7 +78,8 @@
             android:layout_height="wrap_content"
             android:hint="Full Address"
             android:inputType="textPostalAddress"
-            android:layout_marginTop="12dp" />
+            android:layout_marginTop="12dp"
+            android:background="@android:drawable/edit_text"/>
 
         <!-- Zip Code -->
         <EditText
@@ -85,7 +88,8 @@
             android:layout_height="wrap_content"
             android:hint="Zip Code"
             android:inputType="number"
-            android:layout_marginTop="12dp" />
+            android:layout_marginTop="12dp"
+            android:background="@android:drawable/edit_text"/>
 
         <!-- Parent Email -->
         <EditText
@@ -94,7 +98,8 @@
             android:layout_height="wrap_content"
             android:hint="Parent Email"
             android:inputType="textEmailAddress"
-            android:layout_marginTop="12dp" />
+            android:layout_marginTop="12dp"
+            android:background="@android:drawable/edit_text"/>
 
         <!-- Child DOB -->
         <EditText
@@ -104,7 +109,8 @@
             android:hint="Child Date of Birth"
             android:focusable="false"
             android:clickable="true"
-            android:layout_marginTop="12dp" />
+            android:layout_marginTop="12dp"
+            android:background="@android:drawable/edit_text"/>
 
         <!-- Activities -->
         <TextView

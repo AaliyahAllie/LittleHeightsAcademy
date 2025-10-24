@@ -7,7 +7,7 @@
     android:gravity="center_horizontal"
     android:orientation="vertical"
     android:padding="24dp"
-    android:background="#2196F3"
+    android:background="#319CA8"
     tools:context=".RegistrationConfirmationActivity">
 
     <!-- Header Section -->
@@ -70,8 +70,8 @@
         android:layout_height="wrap_content"
         android:text="Track Registration Status"
         android:textAllCaps="false"
-        android:backgroundTint="@android:color/white"
-        android:textColor="#2196F3"
+        android:backgroundTint="@color/white"
+        android:textColor="@color/black"
         android:layout_marginTop="20dp"
         android:padding="12dp"
         android:layout_gravity="center" />

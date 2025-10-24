@@ -6,7 +6,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#2196F3"
+    android:background="#319CA8"
     tools:context=".ParentLoginActivity">
 
     <!-- Scrollable Content -->
@@ -76,7 +76,7 @@
                 android:inputType="textEmailAddress"
                 android:backgroundTint="@android:color/white"
                 android:textColor="@android:color/black"
-                android:textColorHint="#DDDDDD"
+                android:textColorHint="@color/black"
                 android:drawablePadding="10dp"
                 android:padding="12dp"
                 android:layout_marginTop="8dp"
@@ -92,7 +92,7 @@
                 android:inputType="textPassword"
                 android:backgroundTint="@android:color/white"
                 android:textColor="@android:color/black"
-                android:textColorHint="#DDDDDD"
+                android:textColorHint="bl"
                 android:drawablePadding="10dp"
                 android:padding="12dp"
                 android:layout_marginBottom="24dp"
@@ -105,7 +105,7 @@
                 android:layout_height="wrap_content"
                 android:text="Login"
                 android:backgroundTint="@color/white"
-                android:textColor="#2196F3"
+                android:textColor="@color/black"
                 android:textStyle="bold"
                 android:layout_marginBottom="16dp" />
 
@@ -117,6 +117,7 @@
                 android:text="Don’t have an account? Register"
                 android:textColor="@android:color/white"
                 android:textStyle="italic"
+                android:textSize="18dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="16dp" />
 
