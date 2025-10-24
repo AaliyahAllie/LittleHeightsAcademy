@@ -11,8 +11,8 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import java.text.SimpleDateFormat
 import java.util.*
-
 
 class RegisterStudentActivity : AppCompatActivity() {
 
@@ -57,7 +57,7 @@ class RegisterStudentActivity : AppCompatActivity() {
             val address = findViewById<EditText>(R.id.etAddress).text.toString().trim()
             val zip = findViewById<EditText>(R.id.etZipCode).text.toString().trim()
             val email = findViewById<EditText>(R.id.etParentEmail).text.toString().trim()
-            val dob = etDob.text.toString().trim()
+            val dobStr = etDob.text.toString().trim()
 
             val activities = mutableListOf<String>()
             if (findViewById<CheckBox>(R.id.cbKarate).isChecked) activities.add("Karate")
@@ -65,13 +65,39 @@ class RegisterStudentActivity : AppCompatActivity() {
             if (findViewById<CheckBox>(R.id.cbIslamicStudies).isChecked) activities.add("Islamic Studies")
             if (findViewById<CheckBox>(R.id.cbSwimming).isChecked) activities.add("Swimming")
 
-            if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty()) {
+            if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || dobStr.isEmpty()) {
                 Toast.makeText(this, "Please fill in all required fields.", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
+            // Validate DOB
+            val sdf = SimpleDateFormat("d/M/yyyy", Locale.US)
+            val dob: Date
+            try {
+                dob = sdf.parse(dobStr)!!
+            } catch (e: Exception) {
+                Toast.makeText(this, "Invalid date format.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val today = Calendar.getInstance()
+            val dobCalendar = Calendar.getInstance().apply { time = dob }
+
+            // Check future date
+            if (dobCalendar.after(today)) {
+                Toast.makeText(this, "Date of birth cannot be in the future.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            // Check minimum age (1 year)
+            today.add(Calendar.YEAR, -1)
+            if (dobCalendar.after(today)) {
+                Toast.makeText(this, "Student must be at least 1 year old.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
             // Call save method (optional document)
-            saveStudent(firstName, lastName, address, zip, email, dob, activities)
+            saveStudent(firstName, lastName, address, zip, email, dobStr, activities)
         }
     }
 
@@ -96,7 +122,6 @@ class RegisterStudentActivity : AppCompatActivity() {
         val studentId = studentsRef.push().key ?: return
 
         if (documentUri != null) {
-            // Upload document if exists
             val fileRef = storageRef.child("student_docs/$studentId-${documentUri?.lastPathSegment}")
             fileRef.putFile(documentUri!!)
                 .addOnSuccessListener {
@@ -106,11 +131,9 @@ class RegisterStudentActivity : AppCompatActivity() {
                 }
                 .addOnFailureListener { e ->
                     Toast.makeText(this, "Failed to upload document: ${e.message}", Toast.LENGTH_SHORT).show()
-                    // Still save student data without document
                     saveStudentData(studentsRef, studentId, firstName, lastName, address, zip, email, dob, activities, null)
                 }
         } else {
-            // Save without document
             saveStudentData(studentsRef, studentId, firstName, lastName, address, zip, email, dob, activities, null)
         }
     }
