@@ -33,6 +33,8 @@
         <activity
             android:name=".ParentProfileActivity"
             android:exported="true" />
+        <activity android:name=".ParentViewReportsActivity"
+            android:exported="true"/>
         <!--Admin Screens-->
         <activity
             android:name=".AdminViewStudentAccountActivity"

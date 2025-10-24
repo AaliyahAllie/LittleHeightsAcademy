@@ -1,7 +1,15 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.LittleHeightsAcademy" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+    <style name="Theme.LittleHeightsAcademy" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Primary branding colors -->
+        <item name="colorPrimary">@color/primaryColor</item>
+        <item name="colorPrimaryVariant">@color/primaryDarkColor</item>
+        <item name="colorAccent">@color/accentColor</item>
+        <item name="android:statusBarColor">@color/primaryDarkColor</item>
+
+        <!-- Default text colors -->
+        <item name="android:textColor">@color/textColorPrimary</item>
+
+        <!-- Default background -->
+        <item name="android:windowBackground">@color/backgroundColor</item>
     </style>
 </resources>

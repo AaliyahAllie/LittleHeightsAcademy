@@ -4,8 +4,9 @@ import android.app.DownloadManager
 import android.content.Context
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.Gravity
-import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
@@ -16,6 +17,7 @@ class ParentViewReportsActivity : AppCompatActivity() {
     private lateinit var reportTable: TableLayout
     private lateinit var auth: FirebaseAuth
     private lateinit var database: DatabaseReference
+    private val handler = Handler(Looper.getMainLooper())
 
     private val parentEmail: String
         get() = auth.currentUser?.email ?: ""
@@ -28,41 +30,49 @@ class ParentViewReportsActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
         database = FirebaseDatabase.getInstance().reference
 
-        loadReports()
+        startAutoRefresh()
+    }
+
+    private fun startAutoRefresh() {
+        handler.post(object : Runnable {
+            override fun run() {
+                loadReports()
+                handler.postDelayed(this, 5000) // refresh every 5 seconds
+            }
+        })
     }
 
     private fun loadReports() {
+        // Step 1: Fetch students where parent email matches
         database.child("students").get().addOnSuccessListener { snapshot ->
-            val studentIds = mutableListOf<String>()
-            snapshot.children.forEach { snap ->
-                val student = snap.getValue(Student::class.java)
-                if (student != null && student.status == "APPROVED" && student.email == parentEmail) {
-                    studentIds.add(student.id)
-                }
+            val studentsUnderParent = snapshot.children.mapNotNull { snap ->
+                snap.getValue(Student::class.java)?.takeIf { it.email == parentEmail }
             }
 
-            if (studentIds.isEmpty()) {
-                Toast.makeText(this, "No reports found for your children", Toast.LENGTH_SHORT).show()
+            if (studentsUnderParent.isEmpty()) {
+                reportTable.removeAllViews()
+                val noData = TextView(this)
+                noData.text = "No students found for your account."
+                noData.gravity = Gravity.CENTER
+                reportTable.addView(noData)
                 return@addOnSuccessListener
             }
 
-            displayReports(studentIds)
+            // Step 2: Fetch marks for each student
+            displayReports(studentsUnderParent)
         }
     }
 
-    private fun displayReports(studentIds: List<String>) {
+    private fun displayReports(students: List<Student>) {
         reportTable.removeAllViews()
         addTableHeader()
 
-        studentIds.forEach { studentId ->
+        students.forEach { student ->
+            val studentId = student.id
             database.child("reports").child(studentId).get().addOnSuccessListener { snap ->
-                if (snap.exists()) {
-                    val studentName = snap.child("studentName").getValue(String::class.java) ?: "Unknown"
-                    val classMark = snap.child("classMark").getValue(Int::class.java) ?: 0
-                    val islamicMark = snap.child("islamicMark").getValue(Int::class.java) ?: 0
-
-                    addReportRow(studentName, classMark, islamicMark)
-                }
+                val classMark = snap.child("classMark").getValue(Int::class.java) ?: 0
+                val islamicMark = snap.child("islamicMark").getValue(Int::class.java) ?: 0
+                addReportRow("${student.firstName} ${student.lastName}", classMark, islamicMark)
             }
         }
     }
@@ -115,7 +125,6 @@ class ParentViewReportsActivity : AppCompatActivity() {
     }
 
     private fun downloadReport(studentName: String, classMark: Int, islamicMark: Int) {
-        // Generate a simple text file report (could be PDF if desired)
         val reportContent = """
             Student Name: $studentName
             Class Mark: $classMark
@@ -123,12 +132,10 @@ class ParentViewReportsActivity : AppCompatActivity() {
         """.trimIndent()
 
         val filename = "${studentName.replace(" ", "_")}_Report.txt"
-        val fileUri = Uri.parse("file://${filesDir.absolutePath}/$filename")
         openFileOutput(filename, Context.MODE_PRIVATE).use { it.write(reportContent.toByteArray()) }
 
         Toast.makeText(this, "Report saved: $filename", Toast.LENGTH_LONG).show()
 
-        // Optional: trigger DownloadManager to save to Downloads folder
         val dm = getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
         val downloadUri = Uri.parse("file://${filesDir.absolutePath}/$filename")
         val request = DownloadManager.Request(downloadUri)
@@ -138,5 +145,10 @@ class ParentViewReportsActivity : AppCompatActivity() {
             .setDestinationInExternalPublicDir("/Download", filename)
 
         dm.enqueue(request)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        handler.removeCallbacksAndMessages(null)
     }
 }

@@ -42,7 +42,7 @@ class ParentProfileActivity : AppCompatActivity() {
 
         // View student reports
         btnViewReports.setOnClickListener {
-            startActivity(Intent(this, TrackStatusActivity::class.java))
+            startActivity(Intent(this, ParentViewReportsActivity::class.java))
         }
 
         // Register new student

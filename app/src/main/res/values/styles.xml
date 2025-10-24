@@ -1,11 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!-- Input field style -->
     <style name="InputField">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginBottom">10dp</item>
         <item name="android:padding">10dp</item>
         <item name="android:background">@android:drawable/edit_text</item>
+    </style>
+
+    <!-- General Button Style -->
+    <style name="RoundedButton">
+        <item name="android:backgroundTint">@color/primaryColor</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:background">@drawable/rounded_button_bg</item>
+    </style>
+
+    <!-- Table Header Text -->
+    <style name="TableHeaderText">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:padding">6dp</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:background">@color/primaryColor</item>
+    </style>
+
+    <!-- Table Cell Text -->
+    <style name="TableCellText">
+        <item name="android:textColor">@color/textColorPrimary</item>
+        <item name="android:padding">4dp</item>
+        <item name="android:textSize">13sp</item>
     </style>
 
 </resources>
