@@ -1,10 +1,11 @@
 package com.example.littleheightsacademy
 
-import android.app.AlertDialog
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import android.widget.*
+import android.os.Handler
+import android.os.Looper
+import android.widget.LinearLayout
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
@@ -14,10 +15,8 @@ class TrackStatusActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var database: DatabaseReference
     private lateinit var studentContainer: LinearLayout
-    private lateinit var searchNameEdit: EditText
-    private lateinit var searchButton: Button
-
-    private var allStudents: MutableList<Student> = mutableListOf()
+    private val handler = Handler(Looper.getMainLooper())
+    private val refreshInterval: Long = 5000 // 5 seconds
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,71 +25,53 @@ class TrackStatusActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
         database = FirebaseDatabase.getInstance().getReference("students")
 
-        // Initialize views
         studentContainer = findViewById(R.id.studentContainer)
 
-        // Dynamically add search bar and button at top
-        searchNameEdit = EditText(this).apply {
-            hint = "Search by name"
-            layoutParams = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-            )
-        }
-        searchButton = Button(this).apply {
-            text = "Search"
-        }
+        // Start auto-refreshing every 5 seconds
+        startAutoRefresh()
+    }
 
-        val topLayout = LinearLayout(this).apply {
-            orientation = LinearLayout.HORIZONTAL
-            addView(searchNameEdit, LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f))
-            addView(searchButton)
-        }
-        studentContainer.addView(topLayout, 0)
-
-        // Button click listeners
-        searchButton.setOnClickListener { applyFilters() }
-
-        // Load students under this parent
-        loadStudentsForParent()
+    private fun startAutoRefresh() {
+        handler.post(object : Runnable {
+            override fun run() {
+                loadStudentsForParent()
+                handler.postDelayed(this, refreshInterval)
+            }
+        })
     }
 
     private fun loadStudentsForParent() {
         val currentUser = auth.currentUser ?: return
         val parentEmail = currentUser.email ?: return
 
+        // Get only students whose email matches the logged-in parent's email
         database.orderByChild("email").equalTo(parentEmail)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    allStudents.clear()
+                    val students = mutableListOf<Student>()
                     for (child in snapshot.children) {
                         val student = child.getValue(Student::class.java)
-                        student?.let { allStudents.add(it) }
+                        student?.let { students.add(it) }
                     }
-                    displayStudents(allStudents)
+                    displayStudents(students)
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-                    Toast.makeText(this@TrackStatusActivity, "Database error: ${error.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this@TrackStatusActivity,
+                        "Database error: ${error.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             })
     }
 
-    private fun applyFilters() {
-        val query = searchNameEdit.text.toString().trim()
-        val filtered = allStudents.filter {
-            query.isEmpty() || "${it.firstName} ${it.lastName}".contains(query, ignoreCase = true)
-        }
-        displayStudents(filtered)
-    }
-
     private fun displayStudents(students: List<Student>) {
-        // Clear old views except search bar
-        studentContainer.removeViews(1, studentContainer.childCount - 1)
+        studentContainer.removeAllViews()
 
         if (students.isEmpty()) {
             val tv = TextView(this).apply {
-                text = "No students found."
+                text = "No students found under your account."
                 textSize = 16f
                 setTextColor(resources.getColor(android.R.color.white))
             }
@@ -118,10 +99,10 @@ class TrackStatusActivity : AppCompatActivity() {
             }
 
             val statusView = TextView(this).apply {
-                text = "Status: ${student.status ?: "PENDING"}"
+                text = "Registration Status: ${student.status ?: "PENDING"}"
                 textSize = 16f
                 setTextColor(
-                    when(student.status) {
+                    when (student.status) {
                         "APPROVED" -> resources.getColor(android.R.color.holo_green_dark)
                         "REJECTED" -> resources.getColor(android.R.color.holo_red_dark)
                         else -> resources.getColor(android.R.color.darker_gray)
@@ -129,25 +110,14 @@ class TrackStatusActivity : AppCompatActivity() {
                 )
             }
 
-            val viewButton = Button(this).apply {
-                text = "View Report"
-                setOnClickListener { openStudentReport(student) }
-            }
-
             card.addView(nameView)
             card.addView(statusView)
-            card.addView(viewButton)
-
             studentContainer.addView(card)
         }
     }
 
-    private fun openStudentReport(student: Student) {
-        if (student.documentUrl.isNullOrEmpty()) {
-            Toast.makeText(this, "No report uploaded for ${student.firstName}", Toast.LENGTH_SHORT).show()
-            return
-        }
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(student.documentUrl))
-        startActivity(intent)
+    override fun onDestroy() {
+        super.onDestroy()
+        handler.removeCallbacksAndMessages(null) // stop auto-refresh when leaving
     }
 }
