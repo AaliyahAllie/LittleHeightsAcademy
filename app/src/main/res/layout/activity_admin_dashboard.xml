@@ -84,15 +84,14 @@
                     android:layout_marginTop="2dp"
                     android:layout_gravity="center_horizontal" />
 
-                <!-- Circular Progress Indicator -->
                 <com.google.android.material.progressindicator.CircularProgressIndicator
                     android:id="@+id/progressSeating"
-                    android:layout_width="220dp"
-                    android:layout_height="200dp"
+                    android:layout_width="2600dp"
+                    android:layout_height="2600dp"
                     android:layout_marginTop="16dp"
                     android:indeterminate="false"
                     android:max="100"
-                    app:indicatorSize="12dp"
+                    app:indicatorSize="32dp"
                     app:trackColor="#2C3E50"
                     app:indicatorColor="#3C5BFB" />
 
