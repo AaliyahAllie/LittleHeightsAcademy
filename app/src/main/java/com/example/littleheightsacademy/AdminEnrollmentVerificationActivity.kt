@@ -8,8 +8,6 @@ import com.google.firebase.database.*
 
 class AdminEnrollmentVerificationActivity : AppCompatActivity() {
 
-    private lateinit var spinnerOptions: Spinner
-    private lateinit var btnExecuteOption: Button
     private lateinit var btnViewAllApplications: Button
     private lateinit var btnViewClosestArea: Button
     private lateinit var btnViewStudentAccount: Button
@@ -26,23 +24,16 @@ class AdminEnrollmentVerificationActivity : AppCompatActivity() {
         studentsRef = FirebaseDatabase.getInstance().getReference("students")
 
         // Initialize views
-        spinnerOptions = findViewById(R.id.spinnerOptions)
-        btnExecuteOption = findViewById(R.id.btnExecuteOption)
         btnViewAllApplications = findViewById(R.id.btnViewAllApplications)
         btnViewClosestArea = findViewById(R.id.btnViewClosestArea)
         btnViewStudentAccount = findViewById(R.id.btnViewStudentAccount)
         btnUpdateMarks = findViewById(R.id.btnUpdateMarks)
-
-        // Load spinner options
-        val options = arrayOf("Pending Applications", "Approved Applications", "Rejected Applications")
-        spinnerOptions.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, options)
 
         // Load Pending Students by default
         loadPendingStudents()
 
         // Buttons for various admin actions
         btnViewAllApplications.setOnClickListener {
-            // Open the new ViewAllApplicationsActivity
             val intent = Intent(this, ViewAllApplicationsActivity::class.java)
             startActivity(intent)
         }
@@ -57,15 +48,6 @@ class AdminEnrollmentVerificationActivity : AppCompatActivity() {
 
         btnUpdateMarks.setOnClickListener {
             startActivity(Intent(this, AdminStudentMarksActivity::class.java))
-        }
-
-        btnExecuteOption.setOnClickListener {
-            val selected = spinnerOptions.selectedItem.toString()
-            when (selected) {
-                "Pending Applications" -> loadPendingStudents()
-                "Approved Applications" -> loadByStatus("APPROVED")
-                "Rejected Applications" -> loadByStatus("REJECTED")
-            }
         }
 
         // Bottom navigation
@@ -117,7 +99,6 @@ class AdminEnrollmentVerificationActivity : AppCompatActivity() {
             })
     }
 
-    // Pop-up dialog showing student info
     private fun showStudentsDialog(title: String, students: List<Student>) {
         val builder = android.app.AlertDialog.Builder(this)
         builder.setTitle(title)
@@ -134,7 +115,6 @@ class AdminEnrollmentVerificationActivity : AppCompatActivity() {
         builder.show()
     }
 
-    // Bottom navigation logic
     private fun setupBottomNavigation() {
         findViewById<LinearLayout>(R.id.navHome).setOnClickListener {
             startActivity(Intent(this, AdminDashboardActivity::class.java))
@@ -150,6 +130,4 @@ class AdminEnrollmentVerificationActivity : AppCompatActivity() {
             finish()
         }
     }
-
-
 }
