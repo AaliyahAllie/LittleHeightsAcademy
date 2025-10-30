@@ -9,7 +9,6 @@ import com.google.firebase.database.*
 class AdminEnrollmentVerificationActivity : AppCompatActivity() {
 
     private lateinit var btnViewAllApplications: Button
-    private lateinit var btnViewClosestArea: Button
     private lateinit var btnViewStudentAccount: Button
     private lateinit var btnUpdateMarks: Button
 
@@ -25,7 +24,6 @@ class AdminEnrollmentVerificationActivity : AppCompatActivity() {
 
         // Initialize views
         btnViewAllApplications = findViewById(R.id.btnViewAllApplications)
-        btnViewClosestArea = findViewById(R.id.btnViewClosestArea)
         btnViewStudentAccount = findViewById(R.id.btnViewStudentAccount)
         btnUpdateMarks = findViewById(R.id.btnUpdateMarks)
 
@@ -38,12 +36,9 @@ class AdminEnrollmentVerificationActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        btnViewClosestArea.setOnClickListener {
-            Toast.makeText(this, "Feature coming soon: Filter by area!", Toast.LENGTH_SHORT).show()
-        }
-
         btnViewStudentAccount.setOnClickListener {
-            startActivity(Intent(this, AdminStudentAccountActivity::class.java))
+            val intent = Intent(this, AdminViewStudentAccountActivity::class.java)
+            startActivity(intent)
         }
 
         btnUpdateMarks.setOnClickListener {

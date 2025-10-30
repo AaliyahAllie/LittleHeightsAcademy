@@ -64,6 +64,9 @@ class ViewAllApplicationsActivity : AppCompatActivity() {
         tabApproved.setOnClickListener { currentFilterStatus = "APPROVED"; applyFilters() }
         tabPending.setOnClickListener { currentFilterStatus = "PENDING"; applyFilters() }
         tabRejected.setOnClickListener { currentFilterStatus = "REJECTED"; applyFilters() }
+
+        //Bottom Navigation
+        setupBottomNavigation()
     }
 
     private fun fetchAllStudents() {
@@ -187,6 +190,19 @@ class ViewAllApplicationsActivity : AppCompatActivity() {
         }
         builder.show()
     }
+    private fun setupBottomNavigation() {
+        findViewById<LinearLayout>(R.id.navHome).setOnClickListener {
+            startActivity(Intent(this, AdminDashboardActivity::class.java))
+            finish()
+        }
 
+        findViewById<LinearLayout>(R.id.navUsers).setOnClickListener {
+            Toast.makeText(this, "User management coming soon!", Toast.LENGTH_SHORT).show()
+        }
 
+        findViewById<LinearLayout>(R.id.navMenu).setOnClickListener {
+            startActivity(Intent(this, NavigationAdminActivity::class.java))
+            finish()
+        }
+    }
 }
