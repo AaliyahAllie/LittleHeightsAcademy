@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
-    android:background="#37A3A5"
+    android:background="#319CA8"
     tools:context=".PaymentHistoryActivity">
 
     <!-- App Bar -->
