@@ -164,40 +164,7 @@
                     android:textColor="#000000" />
             </TableRow>
 
-            <!-- Example Data Rows -->
-            <TableRow>
-                <TextView
-                    android:text="Aaliyah Allie"
-                    android:padding="6dp"
-                    android:textColor="#000000" />
-                <TextView
-                    android:text="Approved"
-                    android:padding="6dp"
-                    android:textColor="#4CAF50"
-                    android:background="#E8F5E9" />
-                <TextView
-                    android:text="View"
-                    android:padding="6dp"
-                    android:textColor="#3F51B5"
-                    android:textStyle="bold" />
-            </TableRow>
 
-            <TableRow>
-                <TextView
-                    android:text="Aaliyah Allie"
-                    android:padding="6dp"
-                    android:textColor="#000000" />
-                <TextView
-                    android:text="Approved"
-                    android:padding="6dp"
-                    android:textColor="#4CAF50"
-                    android:background="#E8F5E9" />
-                <TextView
-                    android:text="View"
-                    android:padding="6dp"
-                    android:textColor="#3F51B5"
-                    android:textStyle="bold" />
-            </TableRow>
 
         </TableLayout>
     </ScrollView>
