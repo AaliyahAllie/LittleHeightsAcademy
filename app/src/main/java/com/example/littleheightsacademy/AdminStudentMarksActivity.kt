@@ -1,5 +1,6 @@
 package com.example.littleheightsacademy
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Gravity
 import android.widget.*
@@ -34,6 +35,9 @@ class AdminStudentMarksActivity : AppCompatActivity() {
                 displayStudents(approvedStudents)
             }
         }
+
+        // Bottom navigation
+        setupBottomNavigation()
     }
 
     private fun loadApprovedStudents() {
@@ -144,6 +148,21 @@ class AdminStudentMarksActivity : AppCompatActivity() {
             .addOnFailureListener {
                 Toast.makeText(this, "Failed to upload report", Toast.LENGTH_SHORT).show()
             }
+    }
+    private fun setupBottomNavigation() {
+        findViewById<LinearLayout>(R.id.navHome).setOnClickListener {
+            startActivity(Intent(this, AdminDashboardActivity::class.java))
+            finish()
+        }
+
+        findViewById<LinearLayout>(R.id.navUsers).setOnClickListener {
+            Toast.makeText(this, "User management coming soon!", Toast.LENGTH_SHORT).show()
+        }
+
+        findViewById<LinearLayout>(R.id.navMenu).setOnClickListener {
+            startActivity(Intent(this, NavigationAdminActivity::class.java))
+            finish()
+        }
     }
 }
 

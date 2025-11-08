@@ -29,7 +29,6 @@ class NavigationAdminActivity : AppCompatActivity() {
         val btnDashboard: Button = findViewById(R.id.btnDashboard)
         val btnEnrollmentHandler: Button = findViewById(R.id.btnEnrollmentHandler)
         val btnUpdateMarks: Button = findViewById(R.id.btnUpdateMarks)
-        val btnStudentAccount: Button = findViewById(R.id.btnStudentAccount)
         val btnUpdateSeats: Button = findViewById(R.id.btnUpdateSeats)
         val btnLogout: Button = findViewById(R.id.btnLogout)
 
@@ -46,9 +45,6 @@ class NavigationAdminActivity : AppCompatActivity() {
             startActivity(Intent(this, AdminStudentMarksActivity::class.java))
         }
 
-        btnStudentAccount.setOnClickListener {
-            startActivity(Intent(this, StudentAccountActivity::class.java))
-        }
         btnUpdateSeats.setOnClickListener {
             startActivity(Intent(this, AdminUpdateSeatsActivity::class.java))
         }
