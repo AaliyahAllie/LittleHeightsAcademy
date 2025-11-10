@@ -145,6 +145,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Upload Documents"
+            android:backgroundTint="@color/white"
+            android:textColor="@color/black"
             android:layout_marginTop="20dp" />
 
         <!-- Register Button -->
@@ -153,6 +155,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Register Student"
+            android:backgroundTint="@color/white"
+            android:textColor="@color/black"
             android:layout_marginTop="16dp" />
 
     </LinearLayout>
