@@ -6,6 +6,8 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.os.Handler
+import android.os.Looper
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -17,12 +19,24 @@ import android.content.Intent
 
 class AdminStudentMarksActivity : AppCompatActivity() {
 
-    private lateinit var database: DatabaseReference
+    private lateinit var studentsRef: DatabaseReference
+    private lateinit var reportsRef: DatabaseReference
     private lateinit var reportTable: TableLayout
     private lateinit var searchStudent: EditText
     private lateinit var btnSearch: Button
-    private val allReports = mutableListOf<Map<String, Any?>>()
-    private var reportListener: ValueEventListener? = null
+
+    private val allStudents = mutableListOf<Map<String, Any?>>()
+    private val allReports = mutableMapOf<String, Map<String, Any?>>()
+
+    private val handler = Handler(Looper.getMainLooper())
+    private val refreshInterval = 5000L // 5 seconds
+
+    private val refreshRunnable = object : Runnable {
+        override fun run() {
+            fetchAllStudentsAndReports()
+            handler.postDelayed(this, refreshInterval)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,15 +46,17 @@ class AdminStudentMarksActivity : AppCompatActivity() {
         searchStudent = findViewById(R.id.searchStudent)
         btnSearch = findViewById(R.id.btnSearch)
 
-        database = FirebaseDatabase.getInstance().getReference("reports")
+        studentsRef = FirebaseDatabase.getInstance().getReference("students")
+        reportsRef = FirebaseDatabase.getInstance().getReference("reports")
 
-        fetchReports()
+        fetchAllStudentsAndReports()
+        handler.postDelayed(refreshRunnable, refreshInterval)
 
-        // Search functionality
+        // 🔍 Search functionality
         btnSearch.setOnClickListener {
             val query = searchStudent.text.toString().trim().lowercase()
-            val filtered = allReports.filter {
-                (it["studentName"] as? String)?.lowercase()?.contains(query) == true
+            val filtered = allStudents.filter {
+                getStudentName(it).lowercase().contains(query)
             }
             updateTable(filtered)
         }
@@ -48,29 +64,66 @@ class AdminStudentMarksActivity : AppCompatActivity() {
         setupBottomNavigation()
     }
 
-    private fun fetchReports() {
-        reportListener?.let { database.removeEventListener(it) }
+    // 🔹 Fetch all students and their corresponding reports
+    private fun fetchAllStudentsAndReports() {
+        studentsRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(studentSnapshot: DataSnapshot) {
+                allStudents.clear()
 
-        reportListener = object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                allReports.clear()
-                for (child in snapshot.children) {
-                    val data = child.value as? Map<String, Any?> ?: continue
-                    allReports.add(data)
+                for (child in studentSnapshot.children) {
+                    val studentData = child.value as? Map<String, Any?> ?: continue
+                    val studentId = child.key ?: continue
+
+                    // Build a mutable map for each student
+                    val fullStudentData = studentData.toMutableMap()
+                    fullStudentData["studentId"] = studentId
+
+                    allStudents.add(fullStudentData)
                 }
-                reportTable.removeAllViews()
-                updateTable(allReports)
+
+                // Once we have all students, fetch reports
+                fetchReportsThenUpdateTable()
             }
 
             override fun onCancelled(error: DatabaseError) {
                 Toast.makeText(this@AdminStudentMarksActivity, "Error: ${error.message}", Toast.LENGTH_SHORT).show()
             }
-        }
-
-        database.addValueEventListener(reportListener!!)
+        })
     }
 
-    private fun updateTable(reports: List<Map<String, Any?>>) {
+    // 🔹 Fetch reports after students are loaded
+    private fun fetchReportsThenUpdateTable() {
+        reportsRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(reportSnapshot: DataSnapshot) {
+                allReports.clear()
+                for (child in reportSnapshot.children) {
+                    val reportData = child.value as? Map<String, Any?> ?: continue
+                    allReports[child.key ?: ""] = reportData
+                }
+
+                updateTable(allStudents)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(this@AdminStudentMarksActivity, "Error loading reports: ${error.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    // 🔹 Helper function to get student name safely
+    private fun getStudentName(student: Map<String, Any?>): String {
+        return when {
+            student["studentName"] != null -> student["studentName"].toString()
+            student["name"] != null -> student["name"].toString()
+            student["fullName"] != null -> student["fullName"].toString()
+            student["firstName"] != null && student["lastName"] != null ->
+                "${student["firstName"]} ${student["lastName"]}"
+            student["firstName"] != null -> student["firstName"].toString()
+            else -> "Unknown"
+        }
+    }
+
+    private fun updateTable(students: List<Map<String, Any?>>) {
         reportTable.removeAllViews()
 
         // Table Header
@@ -86,29 +139,33 @@ class AdminStudentMarksActivity : AppCompatActivity() {
         }
         reportTable.addView(headerRow)
 
-        for (report in reports) {
+        for (student in students) {
+            val studentId = student["studentId"]?.toString() ?: continue
+            val studentName = getStudentName(student)
+            val existingReport = allReports[studentId]
+
             val row = TableRow(this)
             row.gravity = android.view.Gravity.CENTER_VERTICAL
 
             val name = TextView(this)
-            name.text = report["studentName"]?.toString() ?: "Unknown"
+            name.text = studentName
             name.setPadding(8, 8, 8, 8)
             row.addView(name)
 
             val classMark = EditText(this)
-            classMark.setText(report["classMark"]?.toString() ?: "0")
+            classMark.setText(existingReport?.get("classMark")?.toString() ?: "0")
             classMark.inputType = android.text.InputType.TYPE_CLASS_NUMBER
             classMark.setPadding(8, 8, 8, 8)
             row.addView(classMark)
 
             val islamicMark = EditText(this)
-            islamicMark.setText(report["islamicMark"]?.toString() ?: "0")
+            islamicMark.setText(existingReport?.get("islamicMark")?.toString() ?: "0")
             islamicMark.inputType = android.text.InputType.TYPE_CLASS_NUMBER
             islamicMark.setPadding(8, 8, 8, 8)
             row.addView(islamicMark)
 
             val activitiesMark = EditText(this)
-            activitiesMark.setText(report["activitiesMark"]?.toString() ?: "0")
+            activitiesMark.setText(existingReport?.get("activitiesMark")?.toString() ?: "0")
             activitiesMark.inputType = android.text.InputType.TYPE_CLASS_NUMBER
             activitiesMark.setPadding(8, 8, 8, 8)
             row.addView(activitiesMark)
@@ -119,8 +176,8 @@ class AdminStudentMarksActivity : AppCompatActivity() {
             action.setTextColor(0xFFFFFFFF.toInt())
             action.setOnClickListener {
                 val updatedReport = mapOf(
-                    "studentId" to report["studentId"],
-                    "studentName" to report["studentName"],
+                    "studentId" to studentId,
+                    "studentName" to studentName,
                     "classMark" to classMark.text.toString(),
                     "islamicMark" to islamicMark.text.toString(),
                     "activitiesMark" to activitiesMark.text.toString()
@@ -137,7 +194,7 @@ class AdminStudentMarksActivity : AppCompatActivity() {
 
     private fun saveReportToFirebase(report: Map<String, Any?>) {
         val studentId = report["studentId"]?.toString() ?: return
-        database.child(studentId).setValue(report)
+        reportsRef.child(studentId).setValue(report)
             .addOnSuccessListener {
                 Toast.makeText(this, "Report updated for ${report["studentName"]}", Toast.LENGTH_SHORT).show()
             }
@@ -206,7 +263,7 @@ class AdminStudentMarksActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        reportListener?.let { database.removeEventListener(it) }
+        handler.removeCallbacks(refreshRunnable)
     }
 
     private fun setupBottomNavigation() {
