@@ -11,7 +11,6 @@ class AdminEnrollmentVerificationActivity : AppCompatActivity() {
     private lateinit var btnViewAllApplications: Button
     private lateinit var btnViewStudentAccount: Button
     private lateinit var btnUpdateMarks: Button
-    private lateinit var  btnGenerateReport: Button
 
     private lateinit var studentsRef: DatabaseReference
     private lateinit var pendingStudentsList: MutableList<Student>
@@ -27,7 +26,6 @@ class AdminEnrollmentVerificationActivity : AppCompatActivity() {
         btnViewAllApplications = findViewById(R.id.btnViewAllApplications)
         btnViewStudentAccount = findViewById(R.id.btnViewStudentAccount)
         btnUpdateMarks = findViewById(R.id.btnUpdateMarks)
-        btnGenerateReport =findViewById(R.id.btnGenerateReport)
 
         // Load Pending Students by default
         loadPendingStudents()
@@ -47,10 +45,6 @@ class AdminEnrollmentVerificationActivity : AppCompatActivity() {
             startActivity(Intent(this, AdminStudentMarksActivity::class.java))
         }
 
-        btnGenerateReport.setOnClickListener {
-            val intent = Intent(this, AdminGenerateReportActivity::class.java)
-            startActivity(intent)
-        }
 
         // Bottom navigation
         setupBottomNavigation()
