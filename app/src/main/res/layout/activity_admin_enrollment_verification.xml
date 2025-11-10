@@ -101,6 +101,17 @@
             android:textColor="#000000"
             android:fontFamily="sans-serif-medium"
             android:backgroundTint="@android:color/transparent" />
+
+        <Button
+            android:id="@+id/btnGenerateReport"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_marginTop="10dp"
+            android:text="Generate Student Report"
+            android:background="@drawable/white_rounded_btn"
+            android:textColor="#000000"
+            android:fontFamily="sans-serif-medium"
+            android:backgroundTint="@android:color/transparent" />
     </LinearLayout>
 
 

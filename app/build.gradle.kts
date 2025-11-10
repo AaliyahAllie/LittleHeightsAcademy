@@ -59,6 +59,7 @@ dependencies {
     implementation("com.google.android.material:material:1.9.0")
     // Other
     implementation("de.hdodenhof:circleimageview:3.1.0")
+    implementation(libs.androidx.activity)
 
     // Testing
     testImplementation("junit:junit:4.13.2")

@@ -1,10 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.littleheightsacademy">
-
     <!-- Internet permissions -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -15,15 +16,22 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LittleHeightsAcademy"
         tools:targetApi="31">
-        <!--Parent Screens-->
-        <activity android:name=".NavigationActivity"
-            android:exported="true"/>
-        <activity android:name=".RegistrationConfirmationActivity"
-            android:exported="true"/>
-        <activity android:name=".TrackStatusActivity"
-            android:exported="true"/>
-        <activity android:name=".RegisterStudentActivity"
-            android:exported="true"/>
+        <activity
+            android:name=".AdminGenerateReportActivity"
+            android:exported="false" />
+        <!-- Parent Screens -->
+        <activity
+            android:name=".NavigationActivity"
+            android:exported="true" />
+        <activity
+            android:name=".RegistrationConfirmationActivity"
+            android:exported="true" />
+        <activity
+            android:name=".TrackStatusActivity"
+            android:exported="true" />
+        <activity
+            android:name=".RegisterStudentActivity"
+            android:exported="true" />
         <activity
             android:name=".ParentLoginActivity"
             android:exported="true" />
@@ -33,9 +41,9 @@
         <activity
             android:name=".ParentProfileActivity"
             android:exported="true" />
-        <activity android:name=".ParentViewReportsActivity"
-            android:exported="true"/>
-        <!--Admin Screens-->
+        <activity
+            android:name=".ParentViewReportsActivity"
+            android:exported="true" /> <!-- Admin Screens -->
         <activity
             android:name=".AdminViewStudentAccountActivity"
             android:exported="false" />
@@ -51,10 +59,12 @@
         <activity
             android:name=".AdminEnrollmentVerificationActivity"
             android:exported="false" />
-        <activity android:name=".NavigationAdminActivity"
-            android:exported="true"/>
-        <activity android:name=".AdminDashboardActivity"
-            android:exported="true"/>
+        <activity
+            android:name=".NavigationAdminActivity"
+            android:exported="true" />
+        <activity
+            android:name=".AdminDashboardActivity"
+            android:exported="true" />
         <activity
             android:name=".AdminLoginActivity"
             android:exported="true" />
