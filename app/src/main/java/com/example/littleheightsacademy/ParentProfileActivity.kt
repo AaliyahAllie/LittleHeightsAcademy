@@ -20,7 +20,6 @@ class ParentProfileActivity : AppCompatActivity() {
     private lateinit var llChildrenContainer: LinearLayout
     private lateinit var tvParentName: TextView
     private lateinit var tvGender: TextView
-
     private lateinit var database: DatabaseReference
 
     private val parentEmail: String
@@ -33,7 +32,6 @@ class ParentProfileActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
         database = FirebaseDatabase.getInstance().reference
 
-        // Initialize views
         ivBack = findViewById(R.id.ivBack)
         ivEditChildren = findViewById(R.id.ivEditChildren)
         btnViewPayments = findViewById(R.id.btnViewPayments)
@@ -44,32 +42,26 @@ class ParentProfileActivity : AppCompatActivity() {
         tvParentName = findViewById(R.id.tvParentName)
         tvGender = findViewById(R.id.tvGender)
 
-        // Back button
         ivBack.setOnClickListener { finish() }
 
-        // View payments
         btnViewPayments.setOnClickListener {
             startActivity(Intent(this, PaymentHistoryActivity::class.java))
         }
 
-        // View student reports
         btnViewReports.setOnClickListener {
             startActivity(Intent(this, ParentViewReportsActivity::class.java))
         }
 
-        // Register new student
         btnRegisterStudent.setOnClickListener {
             startActivity(Intent(this, RegisterStudentActivity::class.java))
         }
 
-        // Edit children placeholder
         ivEditChildren.setOnClickListener {
-            // TODO: Open EditChildrenActivity if implemented
+            // Optional: Open EditChildrenActivity if implemented
         }
 
-        // Bottom navigation
         bottomNav.setOnItemSelectedListener { item ->
-            when(item.itemId) {
+            when (item.itemId) {
                 R.id.nav_home -> {
                     startActivity(Intent(this, ParentDashboardActivity::class.java))
                     true
@@ -89,12 +81,10 @@ class ParentProfileActivity : AppCompatActivity() {
 
     private fun loadParentDetails() {
         val parentId = auth.currentUser?.uid ?: return
-
         database.child("parents").child(parentId).get()
             .addOnSuccessListener { snapshot ->
                 val parentName = snapshot.child("firstName").getValue(String::class.java) ?: "Parent Name"
                 val gender = snapshot.child("gender").getValue(String::class.java) ?: "Gender"
-
                 tvParentName.text = parentName
                 tvGender.text = gender
             }
@@ -107,13 +97,14 @@ class ParentProfileActivity : AppCompatActivity() {
         database.child("students").get()
             .addOnSuccessListener { snapshot ->
                 llChildrenContainer.removeAllViews()
+
                 val children = snapshot.children.mapNotNull { snap ->
-                    snap.getValue(Student::class.java)?.takeIf { it.email == parentEmail }
+                    snap.getValue(Student::class.java)?.takeIf { it.email.equals(parentEmail, ignoreCase = true) }
                 }
 
                 if (children.isEmpty()) {
                     val noChildren = TextView(this)
-                    noChildren.text = "No children registered."
+                    noChildren.text = "No children registered under this account."
                     llChildrenContainer.addView(noChildren)
                     return@addOnSuccessListener
                 }
