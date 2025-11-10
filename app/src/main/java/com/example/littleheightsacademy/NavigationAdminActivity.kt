@@ -31,6 +31,7 @@ class NavigationAdminActivity : AppCompatActivity() {
         val btnUpdateMarks: Button = findViewById(R.id.btnUpdateMarks)
         val btnUpdateSeats: Button = findViewById(R.id.btnUpdateSeats)
         val btnLogout: Button = findViewById(R.id.btnLogout)
+        val btnInvoices: Button = findViewById(R.id.btnInvoices)
 
         // 🔹 Button Navigation
         btnDashboard.setOnClickListener {
@@ -48,7 +49,9 @@ class NavigationAdminActivity : AppCompatActivity() {
         btnUpdateSeats.setOnClickListener {
             startActivity(Intent(this, AdminUpdateSeatsActivity::class.java))
         }
-
+        btnInvoices.setOnClickListener {
+            startActivity(Intent(this, AdminInvoiceActivity::class.java))
+        }
         btnLogout.setOnClickListener {
             auth.signOut()
             startActivity(Intent(this, AdminLoginActivity::class.java))

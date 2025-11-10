@@ -43,15 +43,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="center">
-
-            <Button
-                android:id="@+id/btnChat"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="12dp"
-                android:backgroundTint="@color/white"
-                android:textColor="@color/black"
-                android:text="Chat" />
+>
 
             <Button
                 android:id="@+id/btnDashboard"

@@ -24,6 +24,9 @@
             android:name=".NavigationActivity"
             android:exported="true" />
         <activity
+            android:name=".PaymentHistoryActivity"
+            android:exported="true" />
+        <activity
             android:name=".RegistrationConfirmationActivity"
             android:exported="true" />
         <activity
@@ -43,7 +46,8 @@
             android:exported="true" />
         <activity
             android:name=".ParentViewReportsActivity"
-            android:exported="true" /> <!-- Admin Screens -->
+            android:exported="true" />
+        <!-- Admin Screens -->
         <activity
             android:name=".AdminViewStudentAccountActivity"
             android:exported="false" />
@@ -70,6 +74,9 @@
             android:exported="true" />
         <activity
             android:name=".RegisterActivity"
+            android:exported="true" />
+        <activity
+            android:name=".AdminInvoiceActivity"
             android:exported="true" />
         <activity
             android:name=".MainActivity"
