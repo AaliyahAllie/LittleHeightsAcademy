@@ -2,49 +2,32 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="16dp"
-    android:layout_marginBottom="12dp"
-    android:background="@drawable/rounded_card_bg"
-    android:elevation="4dp">
+    android:orientation="horizontal"
+    android:padding="12dp"
+    android:background="#000000"
+    android:layout_marginBottom="8dp">
 
     <TextView
         android:id="@+id/txtInvoiceId"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Invoice ID"
-        android:textColor="@android:color/black"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/txtDate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Date"
-        android:textColor="@android:color/black"
-        android:textSize="14sp" />
+        android:layout_weight="2"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"/>
 
     <TextView
         android:id="@+id/txtAmount"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Amount"
-        android:textColor="@android:color/black"
-        android:textSize="14sp" />
+        android:layout_weight="1"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"/>
 
-    <TextView
-        android:id="@+id/txtStatus"
+    <Button
+        android:id="@+id/btnView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Status"
-        android:textColor="@android:color/black"
-        android:textSize="14sp" />
-
-    <TextView
-        android:id="@+id/txtDescription"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Description"
-        android:textColor="@android:color/black"
-        android:textSize="14sp" />
+        android:text="View"
+        android:backgroundTint="#007BFF"
+        android:textColor="#FFFFFF"/>
 </LinearLayout>

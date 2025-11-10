@@ -1,16 +1,17 @@
 package com.example.littleheightsacademy
 
-import android.app.DownloadManager
-import android.content.Context
-import android.net.Uri
+import android.content.ContentValues
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.provider.MediaStore
 import android.view.Gravity
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import java.io.OutputStream
 
 class ParentViewReportsActivity : AppCompatActivity() {
 
@@ -39,42 +40,56 @@ class ParentViewReportsActivity : AppCompatActivity() {
         handler.post(object : Runnable {
             override fun run() {
                 loadReports()
-                handler.postDelayed(this, 5000) // refresh every 5 seconds
+                handler.postDelayed(this, 5000)
             }
         })
     }
 
     private fun loadReports() {
-        database.child("students").get().addOnSuccessListener { snapshot ->
-            val studentsUnderParent = snapshot.children.mapNotNull { snap ->
-                snap.getValue(Student::class.java)?.takeIf { it.email == parentEmail }
+        reportTable.removeAllViews()
+        addTableHeader()
+
+        database.child("students").get()
+            .addOnSuccessListener { snapshot ->
+                val studentsUnderParent = snapshot.children.mapNotNull { snap ->
+                    snap.getValue(Student::class.java)
+                        ?.takeIf { it.email.equals(parentEmail, ignoreCase = true) }
+                }
+
+                if (studentsUnderParent.isEmpty()) {
+                    val noData = TextView(this)
+                    noData.text = "No students found for your account."
+                    noData.gravity = Gravity.CENTER
+                    reportTable.addView(noData)
+                    return@addOnSuccessListener
+                }
+
+                studentsUnderParent.forEach { student ->
+                    database.child("reports").child(student.id).get()
+                        .addOnSuccessListener { reportSnap ->
+                            val classMark =
+                                reportSnap.child("classMark").getValue(String::class.java)
+                                    ?.toIntOrNull() ?: 0
+                            val islamicMark =
+                                reportSnap.child("islamicMark").getValue(String::class.java)
+                                    ?.toIntOrNull() ?: 0
+                            val activities =
+                                reportSnap.child("activities").getValue(String::class.java) ?: "-"
+
+                            addReportRow(student, classMark, islamicMark, activities)
+                        }
+                        .addOnFailureListener {
+                            Toast.makeText(
+                                this,
+                                "Failed to fetch report for ${student.firstName}",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                }
             }
-
-            reportTable.removeAllViews()
-
-            if (studentsUnderParent.isEmpty()) {
-                val noData = TextView(this)
-                noData.text = "No students found for your account."
-                noData.gravity = Gravity.CENTER
-                reportTable.addView(noData)
-                return@addOnSuccessListener
+            .addOnFailureListener {
+                Toast.makeText(this, "Failed to fetch students.", Toast.LENGTH_SHORT).show()
             }
-
-            addTableHeader()
-            studentsUnderParent.forEach { student ->
-                loadStudentReport(student)
-            }
-        }.addOnFailureListener {
-            Toast.makeText(this, "Failed to fetch students.", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun loadStudentReport(student: Student) {
-        database.child("reports").child(student.id).get().addOnSuccessListener { snap ->
-            val classMark = snap.child("classMark").getValue(Int::class.java) ?: 0
-            val islamicMark = snap.child("islamicMark").getValue(Int::class.java) ?: 0
-            addReportRow("${student.firstName} ${student.lastName}", classMark, islamicMark)
-        }
     }
 
     private fun addTableHeader() {
@@ -82,7 +97,7 @@ class ParentViewReportsActivity : AppCompatActivity() {
         headerRow.setBackgroundColor(resources.getColor(android.R.color.darker_gray, theme))
         headerRow.setPadding(6, 6, 6, 6)
 
-        val headers = listOf("Student", "Class Mark", "Islamic Studies", "Download")
+        val headers = listOf("Student", "Class Mark", "Islamic Studies", "Activities", "Download")
         headers.forEach { text ->
             val tv = TextView(this)
             tv.text = text
@@ -96,12 +111,17 @@ class ParentViewReportsActivity : AppCompatActivity() {
         reportTable.addView(headerRow)
     }
 
-    private fun addReportRow(studentName: String, classMark: Int, islamicMark: Int) {
+    private fun addReportRow(
+        student: Student,
+        classMark: Int,
+        islamicMark: Int,
+        activities: String
+    ) {
         val row = TableRow(this)
         row.setPadding(4, 4, 4, 4)
 
         val tvName = TextView(this)
-        tvName.text = studentName
+        tvName.text = "${student.firstName} ${student.lastName}"
         tvName.gravity = Gravity.CENTER
         row.addView(tvName)
 
@@ -115,40 +135,68 @@ class ParentViewReportsActivity : AppCompatActivity() {
         tvIslamic.gravity = Gravity.CENTER
         row.addView(tvIslamic)
 
+        val tvActivities = TextView(this)
+        tvActivities.text = activities
+        tvActivities.gravity = Gravity.CENTER
+        row.addView(tvActivities)
+
         val btnDownload = Button(this)
         btnDownload.text = "Download"
         btnDownload.setOnClickListener {
-            downloadReport(studentName, classMark, islamicMark)
+            generateReportFile(student, classMark, islamicMark, activities)
         }
         row.addView(btnDownload)
 
         reportTable.addView(row)
     }
 
-    private fun downloadReport(studentName: String, classMark: Int, islamicMark: Int) {
+    private fun generateReportFile(
+        student: Student,
+        classMark: Int,
+        islamicMark: Int,
+        activities: String
+    ) {
         val reportContent = """
-            Student Name: $studentName
-            Class Mark: $classMark
-            Islamic Studies: $islamicMark
-        """.trimIndent()
+        Student Name: ${student.firstName} ${student.lastName}
+        Class Mark: $classMark
+        Islamic Studies: $islamicMark
+        Activities: $activities
+    """.trimIndent()
 
-        val filename = "${studentName.replace(" ", "_")}_Report.txt"
-        openFileOutput(filename, Context.MODE_PRIVATE).use { it.write(reportContent.toByteArray()) }
+        val filename = "${student.firstName}_${student.lastName}_Report.txt"
 
-        val dm = getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-        val downloadUri = Uri.parse("file://${filesDir.absolutePath}/$filename")
-        val request = DownloadManager.Request(downloadUri)
-            .setTitle(filename)
-            .setDescription("Student Report")
-            .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-            .setDestinationInExternalPublicDir("/Download", filename)
-
-        dm.enqueue(request)
-        Toast.makeText(this, "Report saved: $filename", Toast.LENGTH_LONG).show()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        handler.removeCallbacksAndMessages(null)
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                // Android 10+
+                val resolver = contentResolver
+                val contentValues = ContentValues().apply {
+                    put(MediaStore.MediaColumns.DISPLAY_NAME, filename)
+                    put(MediaStore.MediaColumns.MIME_TYPE, "text/plain")
+                    put(MediaStore.MediaColumns.RELATIVE_PATH, "Download/")
+                }
+                val uri =
+                    resolver.insert(MediaStore.Downloads.getContentUri("external"), contentValues)
+                uri?.let {
+                    resolver.openOutputStream(it)
+                        ?.use { out -> out.write(reportContent.toByteArray()) }
+                    Toast.makeText(this, "Report saved to Downloads: $filename", Toast.LENGTH_LONG)
+                        .show()
+                } ?: run {
+                    Toast.makeText(this, "Failed to save report.", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                // Android 6.0 - 9 (API 24-28)
+                val downloads =
+                    android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_DOWNLOADS)
+                if (!downloads.exists()) downloads.mkdirs()
+                val file = java.io.File(downloads, filename)
+                file.writeText(reportContent)
+                Toast.makeText(this, "Report saved to Downloads: $filename", Toast.LENGTH_LONG)
+                    .show()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Toast.makeText(this, "Error saving report: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
     }
 }
