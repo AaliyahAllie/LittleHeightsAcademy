@@ -76,7 +76,7 @@ class AdminLoginActivity : AppCompatActivity() {
                                     Toast.LENGTH_SHORT
                                 ).show()
 
-                                // ✅ Go to AdminDashboardActivity
+                                //  Go to AdminDashboardActivity
                                 val intent = Intent(
                                     this@AdminLoginActivity,
                                     AdminDashboardActivity::class.java
