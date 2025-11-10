@@ -32,6 +32,9 @@ class ApplicationsViaGeoActivity : AppCompatActivity() {
         database = FirebaseDatabase.getInstance().getReference("students")
 
         fetchNearbyStudents()
+
+        // Bottom navigation
+        setupBottomNavigation()
     }
 
     private fun fetchNearbyStudents() {
@@ -157,5 +160,22 @@ class ApplicationsViaGeoActivity : AppCompatActivity() {
                     .addOnSuccessListener { Toast.makeText(this, "Status updated to $newStatus", Toast.LENGTH_SHORT).show() }
                     .addOnFailureListener { e -> Toast.makeText(this, "Failed: ${e.message}", Toast.LENGTH_SHORT).show() }
             }.show()
+    }
+
+    private fun setupBottomNavigation() {
+        findViewById<LinearLayout>(R.id.navHome).setOnClickListener {
+            startActivity(Intent(this, AdminDashboardActivity::class.java))
+            finish()
+        }
+
+        findViewById<LinearLayout>(R.id.navUsers).setOnClickListener {
+            startActivity(Intent(this, AdminEnrollmentVerificationActivity::class.java))
+            finish()
+        }
+
+        findViewById<LinearLayout>(R.id.navMenu).setOnClickListener {
+            startActivity(Intent(this, NavigationAdminActivity::class.java))
+            finish()
+        }
     }
 }
