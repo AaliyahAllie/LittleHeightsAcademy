@@ -30,6 +30,8 @@ class ParentViewReportsActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
         database = FirebaseDatabase.getInstance().reference
 
+        findViewById<ImageView>(R.id.ivBack).setOnClickListener { finish() }
+
         startAutoRefresh()
     }
 
@@ -43,14 +45,14 @@ class ParentViewReportsActivity : AppCompatActivity() {
     }
 
     private fun loadReports() {
-        // Step 1: Fetch students where parent email matches
         database.child("students").get().addOnSuccessListener { snapshot ->
             val studentsUnderParent = snapshot.children.mapNotNull { snap ->
                 snap.getValue(Student::class.java)?.takeIf { it.email == parentEmail }
             }
 
+            reportTable.removeAllViews()
+
             if (studentsUnderParent.isEmpty()) {
-                reportTable.removeAllViews()
                 val noData = TextView(this)
                 noData.text = "No students found for your account."
                 noData.gravity = Gravity.CENTER
@@ -58,22 +60,20 @@ class ParentViewReportsActivity : AppCompatActivity() {
                 return@addOnSuccessListener
             }
 
-            // Step 2: Fetch marks for each student
-            displayReports(studentsUnderParent)
+            addTableHeader()
+            studentsUnderParent.forEach { student ->
+                loadStudentReport(student)
+            }
+        }.addOnFailureListener {
+            Toast.makeText(this, "Failed to fetch students.", Toast.LENGTH_SHORT).show()
         }
     }
 
-    private fun displayReports(students: List<Student>) {
-        reportTable.removeAllViews()
-        addTableHeader()
-
-        students.forEach { student ->
-            val studentId = student.id
-            database.child("reports").child(studentId).get().addOnSuccessListener { snap ->
-                val classMark = snap.child("classMark").getValue(Int::class.java) ?: 0
-                val islamicMark = snap.child("islamicMark").getValue(Int::class.java) ?: 0
-                addReportRow("${student.firstName} ${student.lastName}", classMark, islamicMark)
-            }
+    private fun loadStudentReport(student: Student) {
+        database.child("reports").child(student.id).get().addOnSuccessListener { snap ->
+            val classMark = snap.child("classMark").getValue(Int::class.java) ?: 0
+            val islamicMark = snap.child("islamicMark").getValue(Int::class.java) ?: 0
+            addReportRow("${student.firstName} ${student.lastName}", classMark, islamicMark)
         }
     }
 
@@ -92,6 +92,7 @@ class ParentViewReportsActivity : AppCompatActivity() {
             tv.textSize = 13f
             headerRow.addView(tv)
         }
+
         reportTable.addView(headerRow)
     }
 
@@ -134,8 +135,6 @@ class ParentViewReportsActivity : AppCompatActivity() {
         val filename = "${studentName.replace(" ", "_")}_Report.txt"
         openFileOutput(filename, Context.MODE_PRIVATE).use { it.write(reportContent.toByteArray()) }
 
-        Toast.makeText(this, "Report saved: $filename", Toast.LENGTH_LONG).show()
-
         val dm = getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
         val downloadUri = Uri.parse("file://${filesDir.absolutePath}/$filename")
         val request = DownloadManager.Request(downloadUri)
@@ -145,6 +144,7 @@ class ParentViewReportsActivity : AppCompatActivity() {
             .setDestinationInExternalPublicDir("/Download", filename)
 
         dm.enqueue(request)
+        Toast.makeText(this, "Report saved: $filename", Toast.LENGTH_LONG).show()
     }
 
     override fun onDestroy() {

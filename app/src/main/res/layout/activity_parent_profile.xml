@@ -58,7 +58,7 @@
                 android:id="@+id/tvSubtitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Student Account"
+                android:text="Parent Profile"
                 android:textSize="16sp"
                 android:textColor="#FFFFFF"
                 android:layout_gravity="center"
@@ -100,7 +100,7 @@
                     android:id="@+id/tvParentName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Aaliyah Allie"
+                    android:text="Parent Name"
                     android:textStyle="bold"
                     android:layout_marginTop="4dp"
                     android:textSize="16sp"/>
@@ -109,22 +109,14 @@
                     android:id="@+id/tvGender"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Female"
-                    android:layout_marginTop="2dp"
-                    android:textSize="16sp"/>
-
-                <TextView
-                    android:id="@+id/tvAge"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Age: 30"
+                    android:text="Gender"
                     android:layout_marginTop="2dp"
                     android:textSize="16sp"/>
             </LinearLayout>
 
-            <!-- Children Information Card -->
+            <!-- Children Section -->
             <LinearLayout
-                android:id="@+id/llChildren"
+                android:id="@+id/llChildrenContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
@@ -132,73 +124,26 @@
                 android:padding="16dp"
                 android:layout_marginTop="16dp"
                 android:elevation="4dp">
-
-                <TextView
-                    android:id="@+id/tvChildrenLabel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Children:"
-                    android:textColor="#0000FF"
-                    android:textStyle="bold"
-                    android:textSize="14sp" />
-
-                <!-- Child 1 -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginTop="8dp">
-
-                    <TextView
-                        android:id="@+id/tvChild1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Child #1: John Allie"
-                        android:textSize="16sp"/>
-
-                    <Button
-                        android:id="@+id/btnChild1Account"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="View Student Account"
-                        android:backgroundTint="#2196F3"
-                        android:textColor="#FFFFFF"
-                        android:layout_marginTop="4dp"/>
-                </LinearLayout>
-
-                <!-- Child 2 -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginTop="8dp">
-
-                    <TextView
-                        android:id="@+id/tvChild2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Child #2: Sarah Allie"
-                        android:textSize="16sp"/>
-
-                    <Button
-                        android:id="@+id/btnChild2Account"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="View Student Account"
-                        android:backgroundTint="#2196F3"
-                        android:textColor="#FFFFFF"
-                        android:layout_marginTop="4dp"/>
-                </LinearLayout>
-
-                <!-- Edit Button -->
+                <!-- Add this inside llChildrenContainer LinearLayout, after tvChildrenLabel -->
                 <ImageView
                     android:id="@+id/ivEditChildren"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:src="@drawable/ic_edit"
                     android:layout_gravity="end"
-                    android:layout_marginTop="8dp"
-                    android:contentDescription="Edit"/>
+                    android:contentDescription="Edit Children"
+                    android:layout_marginBottom="8dp"/>
+
+                <TextView
+                    android:id="@+id/tvChildrenLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Children"
+                    android:textColor="#0000FF"
+                    android:textStyle="bold"
+                    android:textSize="14sp"
+                    android:layout_marginBottom="8dp"/>
+                <!-- Children dynamically added here -->
             </LinearLayout>
 
             <!-- Buttons -->
@@ -223,7 +168,7 @@
                     android:id="@+id/btnViewReports"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="ViewReports"
+                    android:text="View Reports"
                     android:backgroundTint="#2196F3"
                     android:textColor="#FFFFFF"
                     android:layout_marginBottom="8dp"/>
