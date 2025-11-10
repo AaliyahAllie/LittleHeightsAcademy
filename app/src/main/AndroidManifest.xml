@@ -52,6 +52,9 @@
             android:name=".AdminViewStudentAccountActivity"
             android:exported="false" />
         <activity
+            android:name=".ApplicationsViaGeoActivity"
+            android:exported="false" />
+        <activity
             android:name=".AdminStudentMarksActivity"
             android:exported="false" />
         <activity

@@ -32,6 +32,7 @@ class NavigationAdminActivity : AppCompatActivity() {
         val btnUpdateSeats: Button = findViewById(R.id.btnUpdateSeats)
         val btnLogout: Button = findViewById(R.id.btnLogout)
         val btnInvoices: Button = findViewById(R.id.btnInvoices)
+        val btnGeo: Button = findViewById(R.id.btnGeo)
 
         // 🔹 Button Navigation
         btnDashboard.setOnClickListener {
@@ -51,6 +52,9 @@ class NavigationAdminActivity : AppCompatActivity() {
         }
         btnInvoices.setOnClickListener {
             startActivity(Intent(this, AdminInvoiceActivity::class.java))
+        }
+        btnGeo.setOnClickListener {
+            startActivity(Intent(this, ApplicationsViaGeoActivity::class.java))
         }
         btnLogout.setOnClickListener {
             auth.signOut()

@@ -70,7 +70,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:background="#FFFFFF"
+                android:background="#000000"
                 android:padding="8dp"
                 android:elevation="4dp"
                 android:gravity="center_vertical"
@@ -79,17 +79,18 @@
 
                 <EditText
                     android:id="@+id/searchStudent"
-                    android:layout_width="212dp"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1.5"
-                    android:background="@drawable/rounded_edittext_bg"
-                    android:textColor="@android:color/black"
-                    android:textColorHint="@color/black"
+                    android:layout_weight="2"
+                    android:background="#000000"
+                    android:textColor="#FFFFFF"
+                    android:textColorHint="#FFFFFF"
                     android:hint="Search by name"
                     android:padding="8dp"
-                    android:textSize="14sp" />
-
-
+                    android:textSize="14sp"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:cursorVisible="true" />
 
                 <Button
                     android:id="@+id/btnSearch"
@@ -113,8 +114,7 @@
                     android:id="@+id/studentTable"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:stretchColumns="0,1,2,3"
-                    android:background="#FFFFFF"
+                    android:stretchColumns="0,1,2,3,4"
                     android:padding="8dp"
                     android:elevation="4dp">
 
@@ -154,13 +154,22 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
+                            android:text="Activities"
+                            android:textStyle="bold"
+                            android:textSize="13sp"
+                            android:gravity="center" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
                             android:text="Action"
                             android:textStyle="bold"
                             android:textSize="13sp"
                             android:gravity="center" />
                     </TableRow>
 
-                    <!-- Example Student 1 -->
+                    <!-- Example Student Row -->
                     <TableRow android:padding="4dp">
 
                         <TextView
@@ -169,6 +178,7 @@
                             android:layout_weight="1"
                             android:text="Aaliyah Allie"
                             android:textSize="13sp"
+                            android:textColor="#FFFFFF"
                             android:gravity="center" />
 
                         <EditText
@@ -178,12 +188,16 @@
                             android:layout_weight="1"
                             android:inputType="number"
                             android:hint="0"
-                            android:textColor="@android:color/black"
-                            android:textColorHint="@color/black"
-                            android:maxLength="3"
+                            android:textColor="#FFFFFF"
+                            android:textColorHint="#FFFFFF"
                             android:gravity="center"
                             android:textSize="13sp"
-                            android:background="@drawable/rounded_edittext_bg" />
+                            android:background="#000000"
+                            android:padding="4dp"
+                            android:maxLength="3"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true"
+                            android:cursorVisible="true" />
 
                         <EditText
                             android:id="@+id/islamicMark1"
@@ -192,65 +206,41 @@
                             android:layout_weight="1"
                             android:inputType="number"
                             android:hint="0"
-                            android:textColor="@android:color/black"
-                            android:textColorHint="@color/black"
-                            android:maxLength="3"
+                            android:textColor="#FFFFFF"
+                            android:textColorHint="#FFFFFF"
                             android:gravity="center"
                             android:textSize="13sp"
-                            android:background="@drawable/rounded_edittext_bg" />
-
-                        <Button
-                            android:id="@+id/uploadButton1"
-                            android:layout_width="0dp"
-                            android:layout_height="36dp"
-                            android:layout_weight="1"
-                            android:text="Upload"
-                            android:textSize="12sp"
-                            android:backgroundTint="#007BFF"
-                            android:textColor="#FFFFFF" />
-                    </TableRow>
-
-                    <!-- Example Student 2 -->
-                    <TableRow android:padding="4dp">
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Kenneth Remmits"
-                            android:textSize="13sp"
-                            android:gravity="center" />
+                            android:background="#000000"
+                            android:padding="4dp"
+                            android:maxLength="3"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true"
+                            android:cursorVisible="true" />
 
                         <EditText
-                            android:id="@+id/classMark2"
+                            android:id="@+id/activitiesMark1"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:inputType="number"
                             android:hint="0"
-                            android:maxLength="3"
+                            android:textColor="#FFFFFF"
+                            android:textColorHint="#FFFFFF"
                             android:gravity="center"
                             android:textSize="13sp"
-                            android:background="@drawable/rounded_edittext_bg" />
-
-                        <EditText
-                            android:id="@+id/islamicMark2"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:inputType="number"
-                            android:hint="0"
+                            android:background="#000000"
+                            android:padding="4dp"
                             android:maxLength="3"
-                            android:gravity="center"
-                            android:textSize="13sp"
-                            android:background="@drawable/rounded_edittext_bg" />
+                            android:focusable="true"
+                            android:focusableInTouchMode="true"
+                            android:cursorVisible="true" />
 
                         <Button
-                            android:id="@+id/uploadButton2"
+                            android:id="@+id/generateButton1"
                             android:layout_width="0dp"
                             android:layout_height="36dp"
                             android:layout_weight="1"
-                            android:text="Upload"
+                            android:text="Generate"
                             android:textSize="12sp"
                             android:backgroundTint="#007BFF"
                             android:textColor="#FFFFFF" />
@@ -260,7 +250,6 @@
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
-
 
     <!-- Bottom Navigation -->
     <LinearLayout
@@ -276,6 +265,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
+        <!-- Users Button -->
         <LinearLayout
             android:id="@+id/navUsers"
             android:layout_width="0dp"
@@ -285,14 +275,12 @@
             android:gravity="center"
             android:clickable="true"
             android:focusable="true">
-
             <ImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:src="@drawable/ic_admin"
                 android:layout_gravity="center"
                 app:tint="@android:color/white" />
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -303,6 +291,7 @@
                 android:fontFamily="sans-serif-medium" />
         </LinearLayout>
 
+        <!-- Home Button -->
         <LinearLayout
             android:id="@+id/navHome"
             android:layout_width="0dp"
@@ -312,14 +301,12 @@
             android:gravity="center"
             android:clickable="true"
             android:focusable="true">
-
             <ImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:src="@drawable/ic_house"
                 android:layout_gravity="center"
                 app:tint="@android:color/white" />
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -330,6 +317,7 @@
                 android:fontFamily="sans-serif-medium" />
         </LinearLayout>
 
+        <!-- Menu Button -->
         <LinearLayout
             android:id="@+id/navMenu"
             android:layout_width="0dp"
@@ -339,14 +327,12 @@
             android:gravity="center"
             android:clickable="true"
             android:focusable="true">
-
             <ImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:src="@drawable/ic_menu"
                 android:layout_gravity="center"
                 app:tint="@android:color/white" />
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

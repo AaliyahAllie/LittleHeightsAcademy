@@ -8,67 +8,86 @@ import android.view.Gravity
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.database.*
-import com.google.android.gms.maps.model.LatLng
-import com.google.maps.android.SphericalUtil
 
 class ApplicationsViaGeoActivity : AppCompatActivity() {
 
     private lateinit var database: DatabaseReference
     private lateinit var studentTable: TableLayout
-    private var allStudents: MutableList<Student> = mutableListOf()
-
-    // Reference location: Pelican Heights
-    private val referenceLatLng = LatLng(-33.9337, 18.5570)
+    private val nearbyAreas = listOf(
+        "Strandfontein",
+        "Pelican Heights",
+        "Mitchells Plain",
+        "Bayview",
+        "Rocklands",
+        "Westridge",
+        "Portlands",
+        "Lentegeur"
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_applications_via_geo)
 
-        database = FirebaseDatabase.getInstance().getReference("students")
         studentTable = findViewById(R.id.studentTable)
+        database = FirebaseDatabase.getInstance().getReference("students")
 
-        fetchAllStudents()
+        fetchNearbyStudents()
     }
 
-    private fun fetchAllStudents() {
+    private fun fetchNearbyStudents() {
         database.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                allStudents.clear()
+                studentTable.removeAllViews()
+
+                // Add header row
+                val header = TableRow(this@ApplicationsViaGeoActivity)
+                arrayOf("Student", "Doc", "Status", "Date", "Action").forEach { h ->
+                    val tv = TextView(this@ApplicationsViaGeoActivity)
+                    tv.text = h
+                    tv.setPadding(4,4,4,4)
+                    tv.setBackgroundColor(0xFFECECEC.toInt())
+                    tv.textSize = 12f
+                    tv.gravity = Gravity.CENTER
+                    header.addView(tv)
+                }
+                studentTable.addView(header)
+
+                var hasAny = false
+
                 for (child in snapshot.children) {
                     val student = child.getValue(Student::class.java)
                     student?.let {
-                        val studentLatLng = geocodeAddress(it.address, it.zip)
-                        if (studentLatLng != null && distanceBetween(referenceLatLng, studentLatLng) <= 15_000.0) {
-                            allStudents.add(it)
+                        // Safe assignment for id
+                        if (it.id.isEmpty()) {
+                            it.id = child.key ?: ""
+                        }
+
+                        // Check if address contains ANY nearby area and status is PENDING
+                        val isNearby = nearbyAreas.any { area ->
+                            it.address.contains(area, ignoreCase = true)
+                        }
+
+                        if (isNearby && it.status.equals("PENDING", ignoreCase = true)) {
+                            addStudentRow(it)
+                            hasAny = true
                         }
                     }
                 }
-                // Sort by closest distance
-                allStudents.sortBy { geocodeAddress(it.address, it.zip)?.let { loc -> distanceBetween(referenceLatLng, loc) } }
-                updateTable(allStudents)
+
+                if (!hasAny) {
+                    val emptyRow = TableRow(this@ApplicationsViaGeoActivity)
+                    val tv = TextView(this@ApplicationsViaGeoActivity)
+                    tv.text = "No pending applications in nearby areas."
+                    tv.setPadding(8,8,8,8)
+                    emptyRow.addView(tv)
+                    studentTable.addView(emptyRow)
+                }
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Toast.makeText(this@ApplicationsViaGeoActivity, "Error: ${error.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@ApplicationsViaGeoActivity, "DB Error: ${error.message}", Toast.LENGTH_SHORT).show()
             }
         })
-    }
-
-    private fun updateTable(students: List<Student>) {
-        studentTable.removeAllViews()
-        // Header
-        val header = TableRow(this)
-        arrayOf("Student", "Doc", "Status", "Date", "Action").forEach { h ->
-            val tv = TextView(this)
-            tv.text = h
-            tv.setPadding(4,4,4,4)
-            tv.setBackgroundColor(0xFFECECEC.toInt())
-            tv.textSize = 12f
-            header.addView(tv)
-        }
-        studentTable.addView(header)
-
-        students.forEach { addStudentRow(it) }
     }
 
     private fun addStudentRow(student: Student) {
@@ -76,26 +95,29 @@ class ApplicationsViaGeoActivity : AppCompatActivity() {
         row.setPadding(4,4,4,4)
         row.gravity = Gravity.CENTER_VERTICAL
 
-        val nameText = TextView(this)
-        nameText.text = "${student.firstName} ${student.lastName}"
-        row.addView(nameText)
+        fun makeTextCell(text: String) = TextView(this).apply {
+            this.text = text
+            setPadding(4,4,4,4)
+            textSize = 12f
+        }
 
-        val viewBtn = Button(this)
-        viewBtn.text = "View"
-        viewBtn.setOnClickListener { showStudentDetailsDialog(student) }
+        // Student Name
+        row.addView(makeTextCell("${student.firstName} ${student.lastName}"))
+        // Doc button
+        val viewBtn = Button(this).apply {
+            text = "View"
+            setOnClickListener { showStudentDetailsDialog(student) }
+        }
         row.addView(viewBtn)
-
-        val statusText = TextView(this)
-        statusText.text = student.status ?: "PENDING"
-        row.addView(statusText)
-
-        val dobText = TextView(this)
-        dobText.text = student.dob ?: "-"
-        row.addView(dobText)
-
-        val actionBtn = Button(this)
-        actionBtn.text = "Action"
-        actionBtn.setOnClickListener { showStatusUpdateDialog(student, statusText) }
+        // Status
+        row.addView(makeTextCell(student.status))
+        // Date (DOB)
+        row.addView(makeTextCell(student.dob))
+        // Action button
+        val actionBtn = Button(this).apply {
+            text = "Action"
+            setOnClickListener { showStatusUpdateDialog(student) }
+        }
         row.addView(actionBtn)
 
         studentTable.addView(row)
@@ -104,22 +126,20 @@ class ApplicationsViaGeoActivity : AppCompatActivity() {
     private fun showStudentDetailsDialog(student: Student) {
         val builder = AlertDialog.Builder(this)
         builder.setTitle("${student.firstName} ${student.lastName}")
-
-        val message = StringBuilder()
-        message.append("First Name: ${student.firstName}\n")
-        message.append("Last Name: ${student.lastName}\n")
-        message.append("Email: ${student.email}\n")
-        message.append("Address: ${student.address}\n")
-        message.append("ZIP: ${student.zip}\n")
-        message.append("DOB: ${student.dob}\n")
-        message.append("Activities: ${student.activities?.joinToString(", ") ?: "-"}\n")
-        message.append("Status: ${student.status ?: "PENDING"}\n")
-        message.append("Document: ${student.documentUrl ?: "Not uploaded"}")
-
-        builder.setMessage(message.toString())
+        val message = """
+            First Name: ${student.firstName}
+            Last Name: ${student.lastName}
+            Email: ${student.email}
+            Address: ${student.address}
+            ZIP: ${student.zip}
+            DOB: ${student.dob}
+            Status: ${student.status}
+            Document: ${student.documentUrl ?: "Not uploaded"}
+        """.trimIndent()
+        builder.setMessage(message)
         builder.setPositiveButton("Open Document") { _, _ ->
-            student.documentUrl?.let { url ->
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+            student.documentUrl?.let {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(it))
                 startActivity(intent)
             } ?: Toast.makeText(this, "No document uploaded", Toast.LENGTH_SHORT).show()
         }
@@ -127,50 +147,15 @@ class ApplicationsViaGeoActivity : AppCompatActivity() {
         builder.show()
     }
 
-    private fun showStatusUpdateDialog(student: Student, statusTextView: TextView) {
+    private fun showStatusUpdateDialog(student: Student) {
         val options = arrayOf("APPROVED", "REJECTED")
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("Update Status for ${student.firstName}")
-        builder.setItems(options) { _, which ->
-            val newStatus = options[which]
-            database.child(student.id ?: return@setItems).child("status").setValue(newStatus)
-                .addOnSuccessListener {
-                    statusTextView.text = newStatus
-                    Toast.makeText(this, "${student.firstName} status updated to $newStatus", Toast.LENGTH_SHORT).show()
-                }
-                .addOnFailureListener { e ->
-                    Toast.makeText(this, "Failed to update status: ${e.message}", Toast.LENGTH_SHORT).show()
-                }
-        }
-        builder.show()
-    }
-
-    // --- GEO UTILS ---
-    private fun geocodeAddress(address: String, zip: String): LatLng? {
-        // Only allow specific locations
-        val locationMap = mapOf(
-            "Strandfontein" to LatLng(-34.0500, 18.4500),
-            "Muizenburg" to LatLng(-34.1000, 18.4500),
-            "Pelican Heights" to LatLng(-33.9337, 18.5570),
-            "Bayview" to LatLng(-33.9500, 18.5800),
-            "Pelican Park" to LatLng(-33.9400, 18.5550)
-        )
-
-        // Match by address substring
-        locationMap.forEach { (key, latLng) ->
-            if (address.contains(key, ignoreCase = true)) return latLng
-        }
-
-        // Optional: match by ZIP if needed
-        val zipMap = mapOf(
-            "7941" to LatLng(-33.9337, 18.5570) // Pelican Heights
-        )
-        zipMap[zip]?.let { return it }
-
-        return null // Not in allowed locations
-    }
-
-    private fun distanceBetween(start: LatLng, end: LatLng): Double {
-        return SphericalUtil.computeDistanceBetween(start, end) // meters
+        AlertDialog.Builder(this)
+            .setTitle("Update Status for ${student.firstName}")
+            .setItems(options) { _, which ->
+                val newStatus = options[which]
+                database.child(student.id).child("status").setValue(newStatus)
+                    .addOnSuccessListener { Toast.makeText(this, "Status updated to $newStatus", Toast.LENGTH_SHORT).show() }
+                    .addOnFailureListener { e -> Toast.makeText(this, "Failed: ${e.message}", Toast.LENGTH_SHORT).show() }
+            }.show()
     }
 }

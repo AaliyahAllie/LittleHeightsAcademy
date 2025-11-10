@@ -1,154 +1,214 @@
 package com.example.littleheightsacademy
 
-import android.content.Intent
+import android.content.ContentValues
+import android.content.DialogInterface
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
-import android.view.Gravity
+import android.os.Environment
 import android.widget.*
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.*
+import java.io.File
+import java.io.FileOutputStream
+import java.io.OutputStream
+import android.content.Intent
 
 class AdminStudentMarksActivity : AppCompatActivity() {
 
-    private val database = FirebaseDatabase.getInstance().reference
-    private lateinit var studentTable: TableLayout
+    private lateinit var database: DatabaseReference
+    private lateinit var reportTable: TableLayout
     private lateinit var searchStudent: EditText
     private lateinit var btnSearch: Button
-
-    private val approvedStudents = mutableListOf<StudentMarks>()
+    private val allReports = mutableListOf<Map<String, Any?>>()
+    private var reportListener: ValueEventListener? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_admin_student_marks)
+        setContentView(R.layout.activity_admin_generate_report)
 
-        studentTable = findViewById(R.id.studentTable)
+        reportTable = findViewById(R.id.reportTable)
         searchStudent = findViewById(R.id.searchStudent)
         btnSearch = findViewById(R.id.btnSearch)
 
-        loadApprovedStudents()
+        database = FirebaseDatabase.getInstance().getReference("reports")
 
-        // Search button logic
+        fetchReports()
+
+        // Search functionality
         btnSearch.setOnClickListener {
             val query = searchStudent.text.toString().trim().lowercase()
-            if (query.isNotEmpty()) {
-                filterStudents(query)
-            } else {
-                displayStudents(approvedStudents)
+            val filtered = allReports.filter {
+                (it["studentName"] as? String)?.lowercase()?.contains(query) == true
             }
+            updateTable(filtered)
         }
 
-        // Bottom navigation
         setupBottomNavigation()
     }
 
-    private fun loadApprovedStudents() {
-        database.child("students").get().addOnSuccessListener { snapshot ->
-            approvedStudents.clear()
+    private fun fetchReports() {
+        reportListener?.let { database.removeEventListener(it) }
 
-            snapshot.children.forEach { snap ->
-                val student = snap.getValue(Student::class.java)
-                if (student != null && student.status == "APPROVED") {
-                    approvedStudents.add(StudentMarks(student))
+        reportListener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                allReports.clear()
+                for (child in snapshot.children) {
+                    val data = child.value as? Map<String, Any?> ?: continue
+                    allReports.add(data)
                 }
+                reportTable.removeAllViews()
+                updateTable(allReports)
             }
 
-            if (approvedStudents.isEmpty()) {
-                Toast.makeText(this, "No approved students found", Toast.LENGTH_SHORT).show()
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(this@AdminStudentMarksActivity, "Error: ${error.message}", Toast.LENGTH_SHORT).show()
             }
-
-            displayStudents(approvedStudents)
         }
+
+        database.addValueEventListener(reportListener!!)
     }
 
-    private fun displayStudents(list: List<StudentMarks>) {
-        studentTable.removeAllViews()
-        addTableHeader()
-        list.forEach { addStudentRow(it) }
-    }
+    private fun updateTable(reports: List<Map<String, Any?>>) {
+        reportTable.removeAllViews()
 
-    private fun filterStudents(query: String) {
-        val filtered = approvedStudents.filter {
-            it.name.lowercase().contains(query)
-        }
-        displayStudents(filtered)
-    }
-
-    private fun addTableHeader() {
+        // Table Header
         val headerRow = TableRow(this)
-        headerRow.setBackgroundColor(resources.getColor(android.R.color.darker_gray, theme))
-        headerRow.setPadding(6, 6, 6, 6)
-
-        val headers = listOf("Student", "Class Mark", "Islamic Studies", "Action")
-        headers.forEach { text ->
+        val headers = listOf("Student", "Class Mark", "Islamic Studies", "Activities", "Action")
+        headers.forEach {
             val tv = TextView(this)
-            tv.text = text
-            tv.gravity = Gravity.CENTER
-            tv.setPadding(4, 4, 4, 4)
-            tv.setTextColor(resources.getColor(android.R.color.white, theme))
-            tv.textSize = 13f
+            tv.text = it
+            tv.setPadding(8, 8, 8, 8)
+            tv.textSize = 14f
+            tv.setBackgroundColor(0xFFECECEC.toInt())
             headerRow.addView(tv)
         }
-        studentTable.addView(headerRow)
-    }
+        reportTable.addView(headerRow)
 
-    private fun addStudentRow(studentMarks: StudentMarks) {
-        val row = TableRow(this)
-        row.setPadding(4, 4, 4, 4)
+        for (report in reports) {
+            val row = TableRow(this)
+            row.gravity = android.view.Gravity.CENTER_VERTICAL
 
-        // Student Name
-        val tvName = TextView(this)
-        tvName.text = studentMarks.name
-        tvName.gravity = Gravity.CENTER
-        row.addView(tvName)
+            val name = TextView(this)
+            name.text = report["studentName"]?.toString() ?: "Unknown"
+            name.setPadding(8, 8, 8, 8)
+            row.addView(name)
 
-        // Class Mark EditText
-        val etClassMark = EditText(this)
-        etClassMark.inputType = android.text.InputType.TYPE_CLASS_NUMBER
-        etClassMark.gravity = Gravity.CENTER
-        etClassMark.hint = studentMarks.classMark.toString()
-        row.addView(etClassMark)
+            val classMark = EditText(this)
+            classMark.setText(report["classMark"]?.toString() ?: "0")
+            classMark.inputType = android.text.InputType.TYPE_CLASS_NUMBER
+            classMark.setPadding(8, 8, 8, 8)
+            row.addView(classMark)
 
-        // Islamic Studies EditText
-        val etIslamicMark = EditText(this)
-        etIslamicMark.inputType = android.text.InputType.TYPE_CLASS_NUMBER
-        etIslamicMark.gravity = Gravity.CENTER
-        etIslamicMark.hint = studentMarks.islamicMark.toString()
-        row.addView(etIslamicMark)
+            val islamicMark = EditText(this)
+            islamicMark.setText(report["islamicMark"]?.toString() ?: "0")
+            islamicMark.inputType = android.text.InputType.TYPE_CLASS_NUMBER
+            islamicMark.setPadding(8, 8, 8, 8)
+            row.addView(islamicMark)
 
-        // Upload Button
-        val btnUpload = Button(this)
-        btnUpload.text = "Upload"
-        row.addView(btnUpload)
+            val activitiesMark = EditText(this)
+            activitiesMark.setText(report["activitiesMark"]?.toString() ?: "0")
+            activitiesMark.inputType = android.text.InputType.TYPE_CLASS_NUMBER
+            activitiesMark.setPadding(8, 8, 8, 8)
+            row.addView(activitiesMark)
 
-        btnUpload.setOnClickListener {
-            val classMark = etClassMark.text.toString().toIntOrNull() ?: 0
-            val islamicMark = etIslamicMark.text.toString().toIntOrNull() ?: 0
-            studentMarks.classMark = classMark
-            studentMarks.islamicMark = islamicMark
+            val action = Button(this)
+            action.text = "Generate"
+            action.setBackgroundColor(0xFF3F51B5.toInt())
+            action.setTextColor(0xFFFFFFFF.toInt())
+            action.setOnClickListener {
+                val updatedReport = mapOf(
+                    "studentId" to report["studentId"],
+                    "studentName" to report["studentName"],
+                    "classMark" to classMark.text.toString(),
+                    "islamicMark" to islamicMark.text.toString(),
+                    "activitiesMark" to activitiesMark.text.toString()
+                )
 
-            saveReport(studentMarks)
+                saveReportToFirebase(updatedReport)
+                showReportPopup(updatedReport)
+            }
+            row.addView(action)
+
+            reportTable.addView(row)
         }
-
-        studentTable.addView(row)
     }
 
-    private fun saveReport(studentMarks: StudentMarks) {
-        val reportData = mapOf(
-            "classMark" to studentMarks.classMark,
-            "islamicMark" to studentMarks.islamicMark,
-            "studentName" to studentMarks.name,
-            "studentId" to studentMarks.student.id
-        )
-
-        database.child("reports")
-            .child(studentMarks.student.id)
-            .setValue(reportData)
+    private fun saveReportToFirebase(report: Map<String, Any?>) {
+        val studentId = report["studentId"]?.toString() ?: return
+        database.child(studentId).setValue(report)
             .addOnSuccessListener {
-                Toast.makeText(this, "${studentMarks.name} report uploaded", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Report updated for ${report["studentName"]}", Toast.LENGTH_SHORT).show()
             }
-            .addOnFailureListener {
-                Toast.makeText(this, "Failed to upload report", Toast.LENGTH_SHORT).show()
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Error saving report: ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }
+
+    private fun showReportPopup(report: Map<String, Any?>) {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Student Report")
+
+        val message = """
+            Student Name: ${report["studentName"]}
+            Student ID: ${report["studentId"]}
+            Class Mark: ${report["classMark"]}
+            Islamic Studies Mark: ${report["islamicMark"]}
+            Activities Mark: ${report["activitiesMark"]}
+        """.trimIndent()
+
+        builder.setMessage(message)
+        builder.setPositiveButton("Download") { _: DialogInterface, _: Int ->
+            saveReportToDevice(report)
+        }
+        builder.setNegativeButton("Close", null)
+        builder.create().show()
+    }
+
+    private fun saveReportToDevice(report: Map<String, Any?>) {
+        val fileName = "${report["studentName"]}_report.txt"
+        val content = """
+            Student Name: ${report["studentName"]}
+            Student ID: ${report["studentId"]}
+            Class Mark: ${report["classMark"]}
+            Islamic Studies: ${report["islamicMark"]}
+            Activities Mark: ${report["activitiesMark"]}
+        """.trimIndent()
+
+        try {
+            val outputStream: OutputStream? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                val resolver = contentResolver
+                val contentValues = ContentValues().apply {
+                    put(android.provider.MediaStore.MediaColumns.DISPLAY_NAME, fileName)
+                    put(android.provider.MediaStore.MediaColumns.MIME_TYPE, "text/plain")
+                    put(android.provider.MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
+                }
+                val uri: Uri? = resolver.insert(android.provider.MediaStore.Downloads.EXTERNAL_CONTENT_URI, contentValues)
+                uri?.let { resolver.openOutputStream(it) }
+            } else {
+                val path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                val file = File(path, fileName)
+                FileOutputStream(file)
+            }
+
+            outputStream?.use {
+                it.write(content.toByteArray())
+                it.flush()
+            }
+
+            Toast.makeText(this, "Report saved to device: $fileName", Toast.LENGTH_LONG).show()
+
+        } catch (e: Exception) {
+            Toast.makeText(this, "Error saving file: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        reportListener?.let { database.removeEventListener(it) }
+    }
+
     private fun setupBottomNavigation() {
         findViewById<LinearLayout>(R.id.navHome).setOnClickListener {
             startActivity(Intent(this, AdminDashboardActivity::class.java))
@@ -166,5 +226,3 @@ class AdminStudentMarksActivity : AppCompatActivity() {
         }
     }
 }
-
-
