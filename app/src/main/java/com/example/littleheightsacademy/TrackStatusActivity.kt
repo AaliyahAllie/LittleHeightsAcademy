@@ -1,10 +1,12 @@
 package com.example.littleheightsacademy
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 
@@ -13,6 +15,7 @@ class TrackStatusActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var database: DatabaseReference
     private lateinit var studentContainer: LinearLayout
+    private lateinit var bottomNav: BottomNavigationView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,9 +25,41 @@ class TrackStatusActivity : AppCompatActivity() {
         database = FirebaseDatabase.getInstance().getReference("students")
 
         studentContainer = findViewById(R.id.studentContainer)
+        bottomNav = findViewById(R.id.bottomNavigation)
 
         // Load and listen for live changes
         loadStudentsForParent()
+
+        // Handle bottom navigation clicks
+        bottomNav.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_home -> {
+                    if (this !is ParentDashboardActivity) {
+                        startActivity(Intent(this, ParentDashboardActivity::class.java))
+                        overridePendingTransition(0, 0)
+                        finish()
+                    }
+                    true
+                }
+                R.id.nav_profile -> {
+                    if (this !is ParentProfileActivity) {
+                        startActivity(Intent(this, ParentProfileActivity::class.java))
+                        overridePendingTransition(0, 0)
+                        finish()
+                    }
+                    true
+                }
+                R.id.nav_menu -> {
+                    if (this !is NavigationActivity) {
+                        startActivity(Intent(this, NavigationActivity::class.java))
+                        overridePendingTransition(0, 0)
+                        finish()
+                    }
+                    true
+                }
+                else -> false
+            }
+        }
     }
 
     private fun loadStudentsForParent() {
