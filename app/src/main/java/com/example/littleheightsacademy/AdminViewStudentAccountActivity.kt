@@ -58,7 +58,7 @@ class AdminViewStudentAccountActivity : AppCompatActivity() {
             }
         }
 
-        // Bottom navigation (kept from your original)
+        // Bottom navigation
         setupBottomNavigation()
     }
 
@@ -70,7 +70,11 @@ class AdminViewStudentAccountActivity : AppCompatActivity() {
                     val student = child.getValue(Student::class.java)
                     student?.let { allStudents.add(it) }
                 }
-                updateTable(allStudents)
+
+                // Show only approved students
+                val approvedStudents = allStudents.filter { it.status == "APPROVED" }
+
+                updateTable(approvedStudents)
                 updateAvailableSeats()
             }
 
@@ -174,7 +178,8 @@ class AdminViewStudentAccountActivity : AppCompatActivity() {
         }
 
         findViewById<LinearLayout>(R.id.navUsers).setOnClickListener {
-            Toast.makeText(this, "User management coming soon!", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, AdminEnrollmentVerificationActivity::class.java))
+            finish()
         }
 
         findViewById<LinearLayout>(R.id.navMenu).setOnClickListener {

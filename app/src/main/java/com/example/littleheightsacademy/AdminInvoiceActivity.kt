@@ -1,8 +1,10 @@
 package com.example.littleheightsacademy
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.database.FirebaseDatabase
@@ -32,6 +34,10 @@ class AdminInvoiceActivity : AppCompatActivity() {
         btnUploadInvoice.setOnClickListener {
             uploadInvoice()
         }
+
+        // Bottom navigation
+        setupBottomNavigation()
+
     }
 
     private fun uploadInvoice() {
@@ -67,5 +73,22 @@ class AdminInvoiceActivity : AppCompatActivity() {
         edtAmount.text.clear()
         edtStatus.text.clear()
         edtDescription.text.clear()
+    }
+
+    private fun setupBottomNavigation() {
+        findViewById<LinearLayout>(R.id.navHome).setOnClickListener {
+            startActivity(Intent(this, AdminDashboardActivity::class.java))
+            finish()
+        }
+
+        findViewById<LinearLayout>(R.id.navUsers).setOnClickListener {
+            startActivity(Intent(this, AdminEnrollmentVerificationActivity::class.java))
+            finish()
+        }
+
+        findViewById<LinearLayout>(R.id.navMenu).setOnClickListener {
+            startActivity(Intent(this, NavigationAdminActivity::class.java))
+            finish()
+        }
     }
 }

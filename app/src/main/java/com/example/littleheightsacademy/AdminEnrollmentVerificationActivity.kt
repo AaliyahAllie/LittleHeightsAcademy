@@ -124,7 +124,8 @@ class AdminEnrollmentVerificationActivity : AppCompatActivity() {
         }
 
         findViewById<LinearLayout>(R.id.navUsers).setOnClickListener {
-            Toast.makeText(this, "User management coming soon!", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, AdminEnrollmentVerificationActivity::class.java))
+            finish()
         }
 
         findViewById<LinearLayout>(R.id.navMenu).setOnClickListener {

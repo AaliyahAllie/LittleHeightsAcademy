@@ -8,7 +8,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.database.*
 import android.content.Intent
 
-
 class AdminGenerateReportActivity : AppCompatActivity() {
 
     private lateinit var database: DatabaseReference
@@ -16,6 +15,7 @@ class AdminGenerateReportActivity : AppCompatActivity() {
     private lateinit var searchStudent: EditText
     private lateinit var btnSearch: Button
     private val allReports = mutableListOf<Map<String, Any>>()
+    private var reportListener: ValueEventListener? = null // track listener reference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,7 +29,7 @@ class AdminGenerateReportActivity : AppCompatActivity() {
 
         fetchReports()
 
-        // Search function
+        // Search functionality
         btnSearch.setOnClickListener {
             val query = searchStudent.text.toString().trim().lowercase()
             val filtered = allReports.filter {
@@ -38,31 +38,37 @@ class AdminGenerateReportActivity : AppCompatActivity() {
             updateTable(filtered)
         }
 
-        //BottomNav
+        // Bottom navigation
         setupBottomNavigation()
-
     }
 
     private fun fetchReports() {
-        database.addValueEventListener(object : ValueEventListener {
+        // Ensure old listener is removed first (prevents duplicates)
+        reportListener?.let { database.removeEventListener(it) }
+
+        reportListener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 allReports.clear()
+
                 for (child in snapshot.children) {
                     val data = child.value as? Map<String, Any> ?: continue
                     allReports.add(data)
                 }
+
+                // ✅ Clear the table before updating to prevent duplicates
+                reportTable.removeAllViews()
                 updateTable(allReports)
             }
 
             override fun onCancelled(error: DatabaseError) {
                 Toast.makeText(this@AdminGenerateReportActivity, "Error: ${error.message}", Toast.LENGTH_SHORT).show()
             }
-        })
+        }
+
+        database.addValueEventListener(reportListener!!)
     }
 
     private fun updateTable(reports: List<Map<String, Any>>) {
-        reportTable.removeAllViews()
-
         // Table Header
         val headerRow = TableRow(this)
         val headers = listOf("Student", "Class Mark", "Islamic Studies", "Action")
@@ -76,7 +82,7 @@ class AdminGenerateReportActivity : AppCompatActivity() {
         }
         reportTable.addView(headerRow)
 
-        // Rows
+        // Table Rows
         for (report in reports) {
             val row = TableRow(this)
             row.gravity = Gravity.CENTER_VERTICAL
@@ -101,12 +107,37 @@ class AdminGenerateReportActivity : AppCompatActivity() {
             action.setBackgroundColor(0xFF3F51B5.toInt())
             action.setTextColor(0xFFFFFFFF.toInt())
             action.setOnClickListener {
+                saveReportToFirebase(report)
                 showReportPopup(report)
             }
             row.addView(action)
 
             reportTable.addView(row)
         }
+    }
+
+    private fun saveReportToFirebase(report: Map<String, Any>) {
+        val studentId = report["studentId"]?.toString() ?: return
+        val studentName = report["studentName"]?.toString() ?: "Unknown"
+        val classMark = report["classMark"]?.toString() ?: "-"
+        val islamicMark = report["islamicMark"]?.toString() ?: "-"
+
+        val reportData = mapOf(
+            "studentId" to studentId,
+            "studentName" to studentName,
+            "classMark" to classMark,
+            "islamicMark" to islamicMark,
+            "timestamp" to System.currentTimeMillis()
+        )
+
+        // ✅ Use child(studentId) to update the same student's report instead of push()
+        database.child(studentId).setValue(reportData)
+            .addOnSuccessListener {
+                Toast.makeText(this, "Report updated for $studentName", Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Error saving report: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
     }
 
     private fun showReportPopup(report: Map<String, Any>) {
@@ -131,14 +162,14 @@ class AdminGenerateReportActivity : AppCompatActivity() {
         builder.setMessage(message)
         builder.setPositiveButton("Close", null)
 
-        // Optional: Add a small “Download” option
-        builder.setNeutralButton("Download PDF") { _, _ ->
-            Toast.makeText(this, "Downloading report for $name...", Toast.LENGTH_SHORT).show()
-            // PDF generation logic can go here
-        }
-
         val dialog = builder.create()
         dialog.show()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // ✅ Remove Firebase listener to prevent double-calls and duplication
+        reportListener?.let { database.removeEventListener(it) }
     }
 
     private fun setupBottomNavigation() {
@@ -148,7 +179,8 @@ class AdminGenerateReportActivity : AppCompatActivity() {
         }
 
         findViewById<LinearLayout>(R.id.navUsers).setOnClickListener {
-            Toast.makeText(this, "User management coming soon!", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, AdminEnrollmentVerificationActivity::class.java))
+            finish()
         }
 
         findViewById<LinearLayout>(R.id.navMenu).setOnClickListener {
