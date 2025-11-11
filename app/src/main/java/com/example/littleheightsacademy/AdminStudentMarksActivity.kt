@@ -31,9 +31,16 @@ class AdminStudentMarksActivity : AppCompatActivity() {
     private val handler = Handler(Looper.getMainLooper())
     private val refreshInterval = 5000L // 5 seconds
 
+    // ✅ Added: track if user is editing
+    private var isEditing = false
+    private val editPauseHandler = Handler(Looper.getMainLooper())
+    private val editPauseDelay = 3000L // 3 seconds after typing stops
+
     private val refreshRunnable = object : Runnable {
         override fun run() {
-            fetchAllStudentsAndReports()
+            if (!isEditing) { // ✅ Only refresh when not editing
+                fetchAllStudentsAndReports()
+            }
             handler.postDelayed(this, refreshInterval)
         }
     }
@@ -74,14 +81,12 @@ class AdminStudentMarksActivity : AppCompatActivity() {
                     val studentData = child.value as? Map<String, Any?> ?: continue
                     val studentId = child.key ?: continue
 
-                    // Build a mutable map for each student
                     val fullStudentData = studentData.toMutableMap()
                     fullStudentData["studentId"] = studentId
 
                     allStudents.add(fullStudentData)
                 }
 
-                // Once we have all students, fetch reports
                 fetchReportsThenUpdateTable()
             }
 
@@ -156,18 +161,21 @@ class AdminStudentMarksActivity : AppCompatActivity() {
             classMark.setText(existingReport?.get("classMark")?.toString() ?: "0")
             classMark.inputType = android.text.InputType.TYPE_CLASS_NUMBER
             classMark.setPadding(8, 8, 8, 8)
+            addTypingListener(classMark)
             row.addView(classMark)
 
             val islamicMark = EditText(this)
             islamicMark.setText(existingReport?.get("islamicMark")?.toString() ?: "0")
             islamicMark.inputType = android.text.InputType.TYPE_CLASS_NUMBER
             islamicMark.setPadding(8, 8, 8, 8)
+            addTypingListener(islamicMark)
             row.addView(islamicMark)
 
             val activitiesMark = EditText(this)
             activitiesMark.setText(existingReport?.get("activitiesMark")?.toString() ?: "0")
             activitiesMark.inputType = android.text.InputType.TYPE_CLASS_NUMBER
             activitiesMark.setPadding(8, 8, 8, 8)
+            addTypingListener(activitiesMark)
             row.addView(activitiesMark)
 
             val action = Button(this)
@@ -190,6 +198,19 @@ class AdminStudentMarksActivity : AppCompatActivity() {
 
             reportTable.addView(row)
         }
+    }
+
+    // ✅ New helper to detect typing
+    private fun addTypingListener(editText: EditText) {
+        editText.addTextChangedListener(object : android.text.TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                isEditing = true
+                editPauseHandler.removeCallbacksAndMessages(null)
+                editPauseHandler.postDelayed({ isEditing = false }, editPauseDelay)
+            }
+            override fun afterTextChanged(s: android.text.Editable?) {}
+        })
     }
 
     private fun saveReportToFirebase(report: Map<String, Any?>) {
